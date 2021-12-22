@@ -13,18 +13,16 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-.env
-
-# Optional eslint cache
-.eslintrc
-.prettierrc
-
 # Tests
 /coverage
 /.nyc_output
 
 # IDEs and editors
 /.idea
+
+.env
+.eslintrc
+.prettierrc
 .project
 .classpath
 .prettierrc
