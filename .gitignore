@@ -13,6 +13,11 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+.env
+
+# Optional eslint cache
+.eslintrc
+.prettierrc
 
 # Tests
 /coverage
@@ -22,6 +27,8 @@ lerna-debug.log*
 /.idea
 .project
 .classpath
+.prettierrc
+.eslintrc.js
 .c9/
 *.launch
 .settings/
