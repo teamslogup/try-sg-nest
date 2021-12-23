@@ -3,10 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import ormconfig from 'ormconfig';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(ormconfig),
-  ],
-  controllers: [],
-  providers: [],
+	imports: [TypeOrmModule.forRoot(ormconfig)],
+	controllers: [],
+	providers: [],
 })
 export class AppModule {}
