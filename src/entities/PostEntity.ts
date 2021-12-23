@@ -41,6 +41,6 @@ export class PostEntity extends CoreEntity {
 		onDelete: 'SET NULL',
 		onUpdate: 'CASCADE',
 	})
-	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+	@JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
 	Account: AccountEntity;
 }
