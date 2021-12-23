@@ -11,9 +11,9 @@ export class AccountEntity extends CoreEntity {
 	@IsNotEmpty()
 	@ApiProperty({
 		example: 'ash',
-		description: 'nickname',
+		description: 'accoundId',
 	})
-	@Column('varchar', { name: 'nickname', length: 200 })
+	@Column('varchar', { name: 'accoundId', length: 200 })
 	accountId: string;
 
 	@IsEmail()
