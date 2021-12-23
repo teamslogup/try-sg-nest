@@ -6,11 +6,8 @@ import { AccountModule } from './account/account.module';
 import ormconfig from 'ormconfig';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(ormconfig),
-    AccountModule,
-  ],
-  controllers: [AccountController],
-  providers: [AccountService],
+	imports: [TypeOrmModule.forRoot(ormconfig), AccountModule],
+	controllers: [AccountController],
+	providers: [AccountService],
 })
 export class AppModule {}
