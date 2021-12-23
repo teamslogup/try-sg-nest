@@ -1,13 +1,12 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
 import { AccountEntity } from './AccountEntity';
+import { CoreEntity } from './CoreEntity';
 
 @Entity({ schema: 'try_gs_nest', name: 'posts' })
-export class PostEntity extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
-
+export class PostEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
@@ -29,21 +28,19 @@ export class PostEntity extends BaseEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 1,
-		description: 'accountId',
-	})
-	@Column('varchar', { name: 'accountId', length: 200 })
-	accountId: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
 		example: ['image1', 'images2'],
 		description: 'images',
 	})
 	@Column('varchar', { name: 'images', length: 200 })
 	images: string[];
 
-	@ManyToOne(() => AccountEntity, account => account.Posts)
+	@Column('int', { name: 'accountId', nullable: true })
+	accountId: number;
+
+	@ManyToOne(() => AccountEntity, accounts => accounts.Posts, {
+		onDelete: 'SET NULL',
+		onUpdate: 'CASCADE',
+	})
+	@JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
 	Account: AccountEntity;
 }

@@ -1,13 +1,12 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
 import { PostEntity } from './PostEntity';
+import { CoreEntity } from './CoreEntity';
 
-@Entity({ schema: 'try_gs_nest', name: 'account' })
-export class AccountEntity extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
-
+@Entity({ schema: 'try_gs_nest', name: 'accounts' })
+export class AccountEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
