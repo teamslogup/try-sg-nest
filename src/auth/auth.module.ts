@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AccountModule } from '../account/account.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Accounts } from '../entities/AccountEntity';
+import { Accounts } from '../common/entities/AccountEntity';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import dotenv from 'dotenv';

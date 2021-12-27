@@ -1,6 +1,6 @@
 import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Accounts } from '../entities/AccountEntity';
+import { Accounts } from '../common/entities/AccountEntity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../account/dto/login-user.dto';
@@ -22,8 +22,9 @@ export class AuthService {
 		if (!user) {
 			throw new ForbiddenException({
 				statusCode: HttpStatus.UNAUTHORIZED, //401
-				message: [`없는 회원입니다.`],
+				message: [`존재하지 않는 회원입니다.`],
 				error: 'Unauthorized',
+				value: {},
 			});
 		}
 		// TODO: 잘못된 사용자 정보를 받았을 때(비밀번호 인증 실패)
