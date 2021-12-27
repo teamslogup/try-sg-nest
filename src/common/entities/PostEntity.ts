@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Accounts } from './AccountEntity';
 
-@Entity({ schema: 'try_gs_nest', name: 'posts' })
+@Entity({ schema: 'try_sg_nest', name: 'posts' })
 @Index('id', ['id'], { unique: true })
 export class Posts {
 	@PrimaryGeneratedColumn()
