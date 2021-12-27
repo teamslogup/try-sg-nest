@@ -1,49 +1,34 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { AccountEntity } from './AccountEntity';
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Accounts } from './AccountEntity';
 
 @Entity({ schema: 'try_gs_nest', name: 'posts' })
-export class PostEntity extends BaseEntity {
+@Index('id', ['id'], { unique: true })
+export class Posts {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'write title',
-		description: 'title',
-	})
-	@Column('varchar', { name: 'title', length: 150 })
+	@Column()
+	accountId: number;
+
+	@Column()
+	userId: string;
+
+	@Column()
 	title: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'write content',
-		description: 'contents',
-	})
-	@Column('varchar', { name: 'contents', length: 2000 })
+	@Column()
 	contents: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 1,
-		description: 'accountId',
-	})
-	@Column('varchar', { name: 'accountId', length: 200 })
-	accountId: string;
+	@Column()
+	images: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: ['image1', 'images2'],
-		description: 'images',
-	})
-	@Column('varchar', { name: 'images', length: 200 })
-	images: string[];
+	@CreateDateColumn()
+	createdAt: Date;
 
-	@ManyToOne(() => AccountEntity, account => account.Posts)
-	Account: AccountEntity;
+	@UpdateDateColumn()
+	updatedAt: Date;
+
+	@ManyToOne(() => Accounts, accounts => accounts.Posts)
+	@JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])
+	Accounts: Accounts;
 }

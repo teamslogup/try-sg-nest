@@ -1,40 +1,36 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { PostEntity } from './PostEntity';
+import { Column, CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Posts } from './PostEntity';
 
-@Entity({ schema: 'try_gs_nest', name: 'account' })
-export class AccountEntity extends BaseEntity {
+@Entity({ schema: 'try_gs_nest', name: 'accounts' })
+@Index('id', ['id'], { unique: true })
+export class Accounts {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@IsString()
-	@IsNotEmpty()
-	@ApiProperty({
-		example: 'ash',
-		description: 'nickname',
-	})
-	@Column('varchar', { name: 'nickname', length: 200 })
-	accountId: string;
+	@Column()
+	userId: string;
 
-	@IsEmail()
-	@ApiProperty({
-		example: 'ash@slogup.com',
-		description: 'email',
-	})
-	@Column('varchar', { name: 'email', length: 200 })
+	@Column()
+	name: string;
+
+	@Column()
 	email: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@Column('varchar', { name: 'password', length: 150 })
+	@Column()
 	password: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@Column('varchar', { name: 'password', length: 200 })
+	@Column()
 	phone: string;
 
-	@OneToMany(() => PostEntity, posts => posts.Account)
-	Posts: PostEntity[];
+	@Column()
+	salt: string;
+
+	@CreateDateColumn()
+	createdAt: Date;
+
+	@UpdateDateColumn()
+	updatedAt: Date;
+
+	@OneToMany(() => Posts, posts => posts.Accounts)
+	Posts: Posts[];
 }
