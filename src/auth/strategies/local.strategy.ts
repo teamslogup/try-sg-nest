@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from '../auth.service';
 import { Strategy } from 'passport-local';
-import { LoginUserDto } from '../../account/dto/login-user.dto';
+import { LoginUserDto } from '../../account/dto/login.user.dto';
 
 // TODO: login 함수 수행 전 id, password 검증
 @Injectable()

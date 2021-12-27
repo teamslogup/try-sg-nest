@@ -2,11 +2,11 @@ import { IsNumber, IsString } from 'class-validator';
 
 export class LoginUserDto {
 	@IsString()
-	userId: string;
+	public userId: string;
 
 	@IsString()
-	password: string;
+	public password: string;
 
 	@IsNumber()
-	errorCount: number;
+	public errorCount: number;
 }
