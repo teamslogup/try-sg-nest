@@ -1,7 +1,13 @@
-export class JoinRequestDto {
-	public userId: string;
-	public name: string;
-	public email: string;
-	public password: string;
-	public phone: string;
-}
+import { PickType } from '@nestjs/swagger';
+import { Accounts } from '../../entities/Accounts';
+
+// signup request dto
+export class JoinRequestDto extends PickType(Accounts, [
+	'userId',
+	'name',
+	'email',
+	'password',
+	'phone',
+	'createdAt',
+	'updatedAt',
+] as const) {}

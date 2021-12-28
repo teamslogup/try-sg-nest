@@ -8,6 +8,13 @@ declare const module: any;
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
+	const config = new DocumentBuilder()
+		.setTitle('try_sg_nest API')
+		.setDescription('try_sg_nest API 문서입니다.')
+		.setVersion('1,0')
+		.addTag('try_sg_nest')
+		.build();
+
 	app.useGlobalPipes(
 		new ValidationPipe({
 			whitelist: true,
@@ -15,7 +22,6 @@ async function bootstrap() {
 		}),
 	);
 
-	const config = new DocumentBuilder().setTitle('APIS').setDescription('NestJS and Swagger API docs').setVersion('1.0').build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('apis', app, document);
 

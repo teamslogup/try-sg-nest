@@ -2,7 +2,7 @@ import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeor
 import { Posts } from './Posts';
 
 @Index('accounts_id_uindex', ['id'], { unique: true })
-@Entity('accounts', { schema: 'try_sg_nest' })
+@Entity({ schema: 'try_sg_nest', name: 'accounts' })
 export class Accounts {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
 	id: number;
