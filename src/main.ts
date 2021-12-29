@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './httpException.filter';
 
 declare const module: any;
 
@@ -21,14 +22,15 @@ async function bootstrap() {
 			transform: true,
 		}),
 	);
+	app.useGlobalFilters(new HttpExceptionFilter());
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('apis', app, document);
 
-	if (module.hot) {
-		module.hot.accept();
-		module.hot.dispose(() => app.close());
-	}
+	// if (module.hot) {
+	// 	module.hot.accept();
+	// 	module.hot.dispose(() => app.close());
+	// }
 
 	await app.listen(3000);
 	console.log(`listening on port 3000`);

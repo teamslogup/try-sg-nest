@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Accounts } from '../entities/Accounts';
 import { Repository } from 'typeorm';
+import { JoinRequestDto } from './dto/join.request.dto';
+import bcrypt from 'bcrypt';
 
 // import { JwtService } from '@nestjs/jwt';
 
@@ -14,11 +16,92 @@ export class AccountService {
 
 	async checkDuplicationId(userId: string) {
 		const searchId = await this.accountRepository.findOne({ where: { userId: userId } });
-
+		const idRegex = /^[A-Za-z0-9+]{6, 10}$/; // TODO: 정규표현식 수정 필요
+		console.log(userId);
 		if (searchId) {
-			// TODO: 이미 존재하는 아이디: 409(conflict), '중복된 아이디입니다.'
+			throw new ConflictException({
+				code: 'duplicatedId',
+				message: '중복된 아이디입니다.',
+			});
+		}
+		// 형식에 맞지 않는 아이디일 때
+		if (!idRegex.test(userId)) {
+			throw new BadRequestException({
+				code: 'invalidId',
+				message: '유효하지 않은 ID입니다. 영문 또는 숫자 6자리 이상 입력해주세요.',
+				value: { accountId: userId },
+			});
 		} else {
-			// TODO: 중복없는 아이디: 204(no content)
+			throw new HttpException('_', 204);
+		}
+	}
+
+	async signUp(body: JoinRequestDto) {
+		// TODO: 아이디를 입력하지 않았을 때
+		if (body.userId === null) {
+			throw new BadRequestException({
+				code: 'requiredId',
+				message: '아이디를 입력해주세요.',
+			});
+		}
+		// TODO: 아이디 중복확인 안했을 때
+		if (!body.isValidatedId) {
+			throw new BadRequestException({
+				code: 'nonValidatedId',
+				message: '아이디 중복확인을 해 주세요.',
+			});
+		}
+		// TODO: 이름을 입력하지 않았을 때
+		if (body.name === null) {
+			throw new BadRequestException({
+				code: 'requireName',
+				message: '이름을 입력해주세요.',
+			});
+		}
+		// TODO: 이름이 형식에 맞지 않을 때
+		// TODO: 이메일을 입력하지 않았을 때
+		if (body.email === null) {
+			throw new BadRequestException({
+				code: 'requireEmail',
+				message: '이메일을 입력해주세요.',
+			});
+		}
+		// TODO: 이메일 형식이 맞지 않을 때
+		// TODO: 비밀번호를 입력하지 않았을 때
+		if (body.password === null) {
+			throw new BadRequestException({
+				code: 'requirePassword',
+				message: '비밀번호를 입력해주세요.',
+			});
+		}
+		// TODO: 비밀번호 형식이 맞지 않을 때
+		// TODO: 전화번호를 입력하지 않았을 때
+		if (body.phone === null) {
+			throw new BadRequestException({
+				code: 'requirePhone',
+				message: '전화번호를 입력해주세요.',
+			});
+		}
+		// TODO: 전화번호 형식이 맞지 않을 때
+		// TODO: 문자 인증 안했을 때
+		if (body.cert !== 'abcd123') {
+			throw new BadRequestException({
+				code: 'requireCert',
+				message: ' 입력해주세요.',
+			});
+		} else {
+			const salt = await bcrypt.genSalt(10);
+			const hashedPassword = await bcrypt.hash(body.password, salt);
+			const userInfo = await this.accountRepository.save({
+				userId: body.userId,
+				name: body.name,
+				email: body.email,
+				password: hashedPassword,
+				phone: body.phone,
+				salt: salt,
+			});
+
+			console.log('userInfo:', userInfo);
 		}
 	}
 }

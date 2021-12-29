@@ -1,33 +1,33 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Accounts } from './Accounts';
+import { Accounts } from '../entities/Accounts';
 
 @Index('posts_id_uindex', ['id'], { unique: true })
 @Index('posts_accounts__fk', ['accountId'], {})
 @Entity('posts', { schema: 'try_sg_nest' })
 export class Posts {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
+	public id: number;
 
 	@Column('int', { name: 'accountId', nullable: true })
-	accountId: number | null;
+	public accountId: number | null;
 
 	@Column('varchar', { name: 'userId', nullable: true, length: 255 })
-	userId: string | null;
+	public userId: string | null;
 
 	@Column('varchar', { name: 'title', nullable: true, length: 255 })
-	title: string | null;
+	public title: string | null;
 
 	@Column('varchar', { name: 'contents', nullable: true, length: 255 })
-	contents: string | null;
+	public contents: string | null;
 
 	@Column('varchar', { name: 'images', nullable: true, length: 255 })
-	images: string | null;
+	public images: string | null;
 
 	@Column('timestamp', { name: 'createdAt', nullable: true })
-	createdAt: Date | null;
+	public createdAt: Date | null;
 
 	@Column('timestamp', { name: 'updatedAt', nullable: true })
-	updatedAt: Date | null;
+	public updatedAt: Date | null;
 
 	@ManyToOne(() => Accounts, accounts => accounts.posts, {
 		onDelete: 'NO ACTION',

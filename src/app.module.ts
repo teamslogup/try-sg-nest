@@ -6,11 +6,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import config from '../ormconfig';
+import { AccountController } from './account/account.controller';
+import { AccountService } from './account/account.service';
+import { AccountModule } from './account/account.module';
+import { Accounts } from './entities/Accounts';
+import { Posts } from './entities/Posts';
 
 @Module({
-	imports: [ConfigModule.forRoot(), TypeOrmModule.forRoot(config)],
-	controllers: [AppController],
-	providers: [AppService],
+	imports: [ConfigModule.forRoot(), TypeOrmModule.forRoot(config), TypeOrmModule.forFeature([Accounts, Posts]), AccountModule],
+	controllers: [AppController, AccountController],
+	providers: [AppService, AccountService],
 })
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {

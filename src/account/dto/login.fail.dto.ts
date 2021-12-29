@@ -5,7 +5,7 @@ export type ErrorValue = {
 	value: string;
 };
 
-// login fail dto
+// login fail response dto
 export class LoginFailDto {
 	@IsString()
 	@ApiProperty({

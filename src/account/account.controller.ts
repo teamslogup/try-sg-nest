@@ -24,14 +24,14 @@ export class AccountController {
 	})
 	@ApiOperation({ summary: '아이디 중복 확인' })
 	@Get('/sessions/me/:userId')
-	checkDuplicationId(@Param() param) {
-		this.AccountService.checkDuplicationId(param.userId);
+	async checkDuplicationId(@Param() param) {
+		await this.AccountService.checkDuplicationId(param.userId);
 	}
 
 	@ApiOperation({ summary: '회원가입' })
 	@Post('/users')
-	signUp(@Body() body: JoinRequestDto) {
-		// this.AccountService.signUp(body);
+	async signUp(@Body() body: JoinRequestDto) {
+		await this.AccountService.signUp(body);
 	}
 
 	@ApiResponse({

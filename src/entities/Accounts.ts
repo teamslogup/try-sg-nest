@@ -1,35 +1,44 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Posts } from './Posts';
+import { Posts } from '../entities/Posts';
+import { IsEmail, IsString } from 'class-validator';
 
 @Index('accounts_id_uindex', ['id'], { unique: true })
 @Entity({ schema: 'try_sg_nest', name: 'accounts' })
 export class Accounts {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-	id: number;
+	public id: number;
 
+	@IsString()
 	@Column('varchar', { name: 'userId', nullable: true, length: 255 })
-	userId: string | null;
+	public userId: string | null;
 
+	@IsString()
 	@Column('varchar', { name: 'name', nullable: true, length: 255 })
-	name: string | null;
+	public name: string | null;
 
+	@IsEmail()
 	@Column('varchar', { name: 'email', nullable: true, length: 255 })
-	email: string | null;
+	public email: string | null;
 
+	@IsString()
 	@Column('varchar', { name: 'password', nullable: true, length: 255 })
-	password: string | null;
+	public password: string | null;
 
+	@IsString()
 	@Column('varchar', { name: 'phone', nullable: true, length: 255 })
-	phone: string | null;
+	public phone: string | null;
 
+	@IsString()
 	@Column('varchar', { name: 'salt', nullable: true, length: 255 })
-	salt: string | null;
+	public salt: string | null;
 
+	// @IsDate()
+	// @IsDateString()
 	@Column('timestamp', { name: 'createdAt', nullable: true })
-	createdAt: Date | null;
+	public createdAt: Date | null;
 
 	@Column('timestamp', { name: 'updatedAt', nullable: true })
-	updatedAt: Date | null;
+	public updatedAt: Date | null;
 
 	@OneToMany(() => Posts, posts => posts.account)
 	posts: Posts[];
