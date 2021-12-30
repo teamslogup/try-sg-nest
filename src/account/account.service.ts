@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { ConflictException, HttpException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -31,13 +31,6 @@ export class AccountService {
 
   findOneByAccountId(accountId: string): Promise<AccountEntity> {
     return this.accountRepository.findOne({ where: { accountId } });
-  }
-
-  async duplicateAccountId(accountId: string): Promise<any> {
-    const findAccount = await this.findOneByAccountId(accountId);
-    if (findAccount) {
-      // throw new HttpException();
-    }
   }
 
   async loginAccount(data: loginRequestDto, res) {
@@ -100,7 +93,14 @@ export class AccountService {
     return res.set({ "x-auth-token": jwtToken }).json({ row: account });
   }
 
-  async checkAuthToken(token: string) {
-    return this.jwtService.decode(token);
+  async duplicateAccountId(accountId: string, res) {
+    const duplicateId = await this.accountRepository.findOne({
+      where: { accountId },
+    });
+    const payload = errorConstants.duplicatedId;
+    if (!duplicateId) {
+      return res.status(204).json();
+    }
+    throw new ConflictException(payload);
   }
 }

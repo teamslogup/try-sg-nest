@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   HttpException,
+  Param,
   Post,
   Req,
   Res,
@@ -47,13 +48,11 @@ export class AccountController {
   logOutUser(@Res() res): any {
     return res.status(204).json();
   }
-  //
-  //   @Get('id-duplication/:accountId')
-  //   validateUser(@Req() req): any {
-  //     return this.usersService.validateUser();
-  //   }
-  // }
-  //
+
+  @Get("id-duplication/:accountId")
+  validateUser(@Param("accountId") accountId: string, @Res() res): any {
+    return this.accountService.duplicateAccountId(accountId, res);
+  }
 }
 
 @Controller("sender")
