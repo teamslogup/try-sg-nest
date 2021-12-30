@@ -28,17 +28,17 @@ export class PostEntity extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: ['image1', 'images2'],
+		example: 'images',
 		description: 'images',
 	})
 	@Column('varchar', { name: 'images', length: 200 })
-	images: string[];
+	images: string;
 
-	@Column('int', { name: 'accountId', nullable: true })
+	@IsNotEmpty()
+	@Column('int', { name: 'accountId' })
 	accountId: number;
 
-	@ManyToOne(() => AccountEntity, accounts => accounts.Posts, {
-		onDelete: 'SET NULL',
+	@ManyToOne(type => AccountEntity, account => account.Posts, {
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'accountId', referencedColumnName: 'id' }])

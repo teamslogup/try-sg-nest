@@ -1,28 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 import { CoreEntity } from 'src/entities/CoreEntity';
 
 export class SignUpRequestDto extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'accountId',
+		example: 'signupash',
 		description: 'accountId',
 	})
+	@Matches(/^[a-zA-Z0-9]*$/)
+	@MinLength(6)
 	public accountId: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'password',
-		description: 'password',
+		example: 'ash',
+		description: 'name',
 	})
+	@Matches(/^[a-zA-Z0-9]*$/)
+	@MinLength(2)
 	public name: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'write your password',
+		example: '01013137979',
+		description: 'phone',
+	})
+	public phone: string;
+
+	@IsString()
+	@ApiProperty({
+		example: 'ash@slogup.com',
 		description: 'email',
 	})
 	public email: string;
@@ -30,16 +41,16 @@ export class SignUpRequestDto extends CoreEntity {
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'write your password',
-		description: 'phone',
+		example: 'Good@@0531',
+		description: 'password',
 	})
-	public phone: string;
+	public password: string;
 
 	@IsString()
 	@IsNotEmpty()
 	@ApiProperty({
-		example: 'write your password',
-		description: 'password',
+		example: 'abc123',
+		description: '인증코드',
 	})
-	public password: string;
+	public cert: string;
 }
