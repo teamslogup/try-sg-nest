@@ -1,18 +1,4 @@
-import {
-	Body,
-	Controller,
-	Param,
-	ParseIntPipe,
-	Post,
-	Delete,
-	Put,
-	UseGuards,
-	Req,
-	Get,
-	HttpStatus,
-	Res,
-	Query,
-} from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Post, Delete, Put, UseGuards, Req, Get, Query } from '@nestjs/common';
 import {
 	ApiBadRequestResponse,
 	ApiCreatedResponse,
@@ -99,19 +85,22 @@ export class PostController {
 	})
 	@ApiQuery({
 		name: 'page',
+		example: 0,
 		description: 'page',
 	})
 	@ApiQuery({
 		name: 'limit',
+		example: 12,
 		description: 'limit',
 	})
 	@ApiQuery({
 		name: 'keyword',
+		example: 'test',
 		required: false,
 		description: 'keyword',
 	})
 	@Get()
-	async getPosts(@Query('page') page, @Query('limit') limit, @Query('keyword') keyword) {
+	async getPosts(@Query('page') page: number, @Query('limit') limit: number, @Query('keyword') keyword: string) {
 		try {
 			return await this.postService.getPosts({ page, limit, keyword });
 		} catch (error) {

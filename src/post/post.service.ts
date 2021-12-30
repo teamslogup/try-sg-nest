@@ -57,7 +57,7 @@ export class PostService {
 		if (!keyword) {
 			keyword = '';
 		}
-		const paginationItem = await this.postRepository.find({
+		const [responseGetPost, count] = await this.postRepository.findAndCount({
 			skip: page * limit,
 			take: limit,
 			where: { title: Like(`%${keyword}%`) },
@@ -67,7 +67,8 @@ export class PostService {
 		});
 
 		return {
-			rows: [...paginationItem],
+			rows: [...responseGetPost],
+			count: count,
 		};
 	}
 

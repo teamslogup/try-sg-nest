@@ -34,10 +34,6 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-# Toy Project
-
-- 애쉬 and 엘리
-
 ## 기술 스택
 
 - Nest JS , TypeScript , TypeORM , MySQL , Swagger
