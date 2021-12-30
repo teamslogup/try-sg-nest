@@ -1,4 +1,4 @@
-export const errorConstants = {
+export const errorConstant = {
   loginInvalidAccount: {
     code: "",
     mgs: "존재하지 않는 회원입니다.",
@@ -36,22 +36,27 @@ export const errorConstants = {
   sendMessageWrongPhone: {
     code: "invalidPhone",
     msg: "유효하지 않은 전화번호 형식입니다.",
+    value: null,
   },
   sendMessageInvalidCode: {
     code: "wrongAuthCode",
     msg: "잘못된 인증코드입니다.",
+    value: null,
   },
   signupInvalidId: {
     code: "invalidId",
     msg: "유효하지 않은 ID입니다. 영문 또는 숫자 6자리 이상 입력해주세요.",
+    value: null,
   },
   signupInvalidName: {
     code: "invalidName",
     msg: "유효하지 않은 이름입니다. 한글 또는 영문 2자리 이상 입력해주세요.",
+    value: null,
   },
   signupInvalidEmail: {
     code: "invalidEmail",
     msg: "유효하지 않은 이메일 형식입니다.",
+    value: null,
   },
   signupInvalidPassword: {
     code: "invalidPassword",
@@ -60,6 +65,7 @@ export const errorConstants = {
   signupInvalidPhone: {
     code: "invalidPhone",
     msg: "유효하지 않은 전화번호 형식입니다.",
+    value: null,
   },
   signupEmptyId: {
     code: "requireId",
@@ -78,6 +84,10 @@ export const errorConstants = {
     msg: "비밀번호를 입력해주세요",
   },
   signupEmptyToken: {
+    code: "requireCert",
+    msg: "인증토큰을 입력해주세요",
+  },
+  signupEmptyCert: {
     code: "requireCert",
     msg: "인증토큰을 입력해주세요",
   },
