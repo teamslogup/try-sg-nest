@@ -1,5 +1,4 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
 import { Accounts } from '../../entities/Accounts';
 
 // signup request dto
@@ -17,7 +16,7 @@ export class JoinRequestDto extends PickType(Accounts, [
 		description: '문자 인증 성공 시 받는 토큰',
 		required: true,
 	})
-	@IsString()
+	// @IsString()
 	public cert: string;
 
 	@ApiProperty({
@@ -25,7 +24,7 @@ export class JoinRequestDto extends PickType(Accounts, [
 		description: '문자 인증 성공 시 받는 토큰의 만료일',
 		required: true,
 	})
-	@IsString()
+	// @IsString()
 	public certExpiredAt: string;
 
 	@ApiProperty({
@@ -33,6 +32,6 @@ export class JoinRequestDto extends PickType(Accounts, [
 		description: '아이디 중복확인 완료 여부',
 		required: true,
 	})
-	@IsBoolean()
+	// @IsBoolean()
 	public isValidatedId: boolean;
 }

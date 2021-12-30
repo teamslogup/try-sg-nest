@@ -2,8 +2,10 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
 import { Response } from 'express';
 
 export interface Row {
+	error?: string;
+	statusCode?: 400;
+	message: string[];
 	code: string;
-	message: string;
 	value?: object;
 }
 
@@ -15,18 +17,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		const status = exception.getStatus();
 		const err = exception.getResponse() as string | Row;
 
-		if (typeof err !== 'string') {
+		// class-validator가 준 에러
+		if (typeof err !== 'string' && err.error === 'Bad Request') {
 			const json: Row = {
 				code: err.code,
 				message: err.message,
 				value: err.value,
 			};
+			console.log(err.code, err.message, err.value);
 			return response.status(status).json({
 				row: json,
 			});
 		}
-
 		console.log(status, err);
-		response.status(status).json({ message: err });
+
+		// 서버 자체 발생 에러
+		response.status(status).json({ row: err });
 	}
 }

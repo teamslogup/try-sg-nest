@@ -1,37 +1,24 @@
 import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { UndefinedToNullInterceptor } from '../common/interceptors/undefinedToNull.interceptor';
-import { JoinRequestDto } from './dto/join.request.dto';
-import { LoginUserDto } from './dto/login.user.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JoinRequestDto } from './dto/join.request.dto';
 import { UserDto } from '../common/dto/user.dto';
 import { LoginFailDto } from './dto/login.fail.dto';
+// import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
+import { LoginUserDto } from './dto/login.user.dto';
 
-@ApiTags('User')
+@ApiTags('Account')
 @UseInterceptors(UndefinedToNullInterceptor)
 @Controller('account')
 export class AccountController {
 	constructor(private AccountService: AccountService) {}
 
 	@ApiOperation({ summary: '유저 정보 조회' })
-	@Get()
-	getUser() {}
-
-	@ApiParam({
-		name: 'id',
-		required: true,
-		description: '유저가 입력한 아이디',
-	})
-	@ApiOperation({ summary: '아이디 중복 확인' })
-	@Get('/sessions/me/:userId')
-	async checkDuplicationId(@Param() param) {
-		await this.AccountService.checkDuplicationId(param.userId);
-	}
-
-	@ApiOperation({ summary: '회원가입' })
-	@Post('/users')
-	async signUp(@Body() body: JoinRequestDto) {
-		await this.AccountService.signUp(body);
+	// @UseGuards(JwtAuthGuard)
+	@Get('sessions/me')
+	getProfile() {
+		return;
 	}
 
 	@ApiResponse({
@@ -45,12 +32,40 @@ export class AccountController {
 		description: '로그인 실패',
 	})
 	@ApiOperation({ summary: '로그인' })
+	// @UseGuards(LocalAuthGuard)
 	@Post('/sessions/me')
-	logIn(@Body() data: LoginUserDto) {
-		// this.AccountService.logIn(data);
+	async logIn(@Body() data: LoginUserDto) {
+		await this.AccountService.logIn(data);
 	}
 
 	@ApiOperation({ summary: '로그아웃' })
 	@Delete('/sessions/me')
 	logOut() {}
+
+	@ApiParam({
+		name: 'id',
+		required: true,
+		description: '유저가 입력한 아이디',
+	})
+	@ApiOperation({ summary: '아이디 중복 확인' })
+	@Get('/sessions/me/:userId')
+	async checkDuplicationId(@Param() param) {
+		await this.AccountService.checkDuplicationId(param.userId);
+	}
+
+	@ApiResponse({
+		type: JoinRequestDto,
+		status: 201,
+		description: '회원가입 성공',
+	})
+	@ApiResponse({
+		type: JoinRequestDto,
+		status: 400,
+		description: '모든 회원가입 실패 케이스',
+	})
+	@ApiOperation({ summary: '회원가입' })
+	@Post('/users')
+	async signUp(@Body() body: JoinRequestDto) {
+		return await this.AccountService.signUp(body);
+	}
 }

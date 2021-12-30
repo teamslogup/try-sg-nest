@@ -11,11 +11,20 @@ import { AccountService } from './account/account.service';
 import { AccountModule } from './account/account.module';
 import { Accounts } from './entities/Accounts';
 import { Posts } from './entities/Posts';
+import { SenderController } from './sender/sender.controller';
+import { SenderModule } from './sender/sender.module';
+import { SenderService } from './sender/sender.service';
 
 @Module({
-	imports: [ConfigModule.forRoot(), TypeOrmModule.forRoot(config), TypeOrmModule.forFeature([Accounts, Posts]), AccountModule],
-	controllers: [AppController, AccountController],
-	providers: [AppService, AccountService],
+	imports: [
+		ConfigModule.forRoot(),
+		TypeOrmModule.forRoot(config),
+		TypeOrmModule.forFeature([Accounts, Posts]),
+		AccountModule,
+		SenderModule,
+	],
+	controllers: [AppController, AccountController, SenderController],
+	providers: [AppService, AccountService, SenderService],
 })
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {
