@@ -1,4 +1,5 @@
 ## Description
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
@@ -32,11 +33,6 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-# Toy Project
-
-
-- 애쉬 and 엘리
 
 ## 기술 스택
 
