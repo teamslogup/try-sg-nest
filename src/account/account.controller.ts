@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Headers,
+  HttpException,
   Post,
   Req,
   Res,
@@ -44,7 +45,7 @@ export class AccountController {
   @Delete("sessions/me")
   @UseGuards(JwtAuthGuard)
   logOutUser(@Res() res): any {
-    return res;
+    return res.status(204).json();
   }
   //
   //   @Get('id-duplication/:accountId')
