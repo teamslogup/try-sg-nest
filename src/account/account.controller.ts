@@ -24,13 +24,19 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post("users")
-  createUser(@Body() data: SignUpRequestDto, @Res() res): any {
-    return this.accountService.createAccount(data, res);
+  async createUser(
+    @Body() data: SignUpRequestDto,
+    @Res() res
+  ): Promise<Response> {
+    return await this.accountService.createAccount(data, res);
   }
 
   @Post("sessions/me")
-  loginUser(@Body() data: loginRequestDto, @Res() res): any {
-    return this.accountService.loginAccount(data, res);
+  async loginUser(
+    @Body() data: loginRequestDto,
+    @Res() res
+  ): Promise<Response> {
+    return await this.accountService.loginAccount(data, res);
   }
 
   @Get("sessions/me")
@@ -39,13 +45,13 @@ export class AccountController {
     @CurrentUser() account: AccountEntity,
     @CurrentToken() token: string,
     @Res() res
-  ): any {
+  ): Response {
     return res.set({ "x-auth-token": token }).json({ row: account });
   }
 
   @Delete("sessions/me")
   @UseGuards(JwtAuthGuard)
-  logOutUser(@Res() res): any {
+  logOutUser(@Res() res): Response {
     return res.status(204).json();
   }
 
@@ -56,4 +62,20 @@ export class AccountController {
 }
 
 @Controller("sender")
-export class SenderController {}
+export class SenderController {
+  constructor(private readonly accountService: AccountService) {}
+
+  @Post("message-auth-tokens")
+  sendMessageAuthToken(@Body("phone") phone: string, @Res() res): any {
+    return this.accountService.sendMessage(phone, res);
+  }
+
+  @Post("message-auth-tokens/:authCode/verification")
+  checkMessageAuthToken(
+    @Body("phone") phone: string,
+    @Param("authCode") authCode: string,
+    @Res() res
+  ): any {
+    return this.accountService.checkMessage(phone, authCode, res);
+  }
+}
