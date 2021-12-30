@@ -9,20 +9,19 @@ import { AuthGuard } from "@nestjs/passport";
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard("jwt") {
-  constructor() {
+  constructor(private token: string) {
     super();
   }
   getRequest(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest();
+    this.token = req.headers["x-auth-token"];
     return req;
   }
 
   handleRequest(err: any, user: any) {
-    const a = Res;
-    console.log(a);
     if (err || !user) {
       const payload = errorConstants.TokenError;
-      payload.value = "token.";
+      payload.value = this.token;
       throw new HttpException(payload, 401) || err;
     }
     return user;
