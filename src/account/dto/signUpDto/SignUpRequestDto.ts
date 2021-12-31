@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { CoreEntity } from "src/entities/Core.entity";
 
 export class SignUpRequestDto extends CoreEntity {
