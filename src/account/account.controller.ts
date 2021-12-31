@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { UndefinedToNullInterceptor } from '../common/interceptors/undefinedToNull.interceptor';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -17,8 +17,8 @@ export class AccountController {
 	@ApiOperation({ summary: '유저 정보 조회' })
 	// @UseGuards(JwtAuthGuard)
 	@Get('sessions/me')
-	getProfile() {
-		return;
+	async getProfile(@Req() req) {
+		await this.AccountService.getProfile(req);
 	}
 
 	@ApiResponse({
@@ -34,13 +34,15 @@ export class AccountController {
 	@ApiOperation({ summary: '로그인' })
 	// @UseGuards(LocalAuthGuard)
 	@Post('/sessions/me')
-	async logIn(@Body() data: LoginUserDto) {
-		await this.AccountService.logIn(data);
+	async logIn(@Body() data: LoginUserDto, @Res() res) {
+		await this.AccountService.logIn(data, res);
 	}
 
 	@ApiOperation({ summary: '로그아웃' })
 	@Delete('/sessions/me')
-	logOut() {}
+	async logOut(@Req() req) {
+		await this.AccountService.logOut(req);
+	}
 
 	@ApiParam({
 		name: 'id',

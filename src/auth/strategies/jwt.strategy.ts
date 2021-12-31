@@ -7,14 +7,9 @@ import { Injectable } from '@nestjs/common';
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor() {
 		super({
-			jwtFromRequest: ExtractJwt.fromHeader('x-auth-token'), // 토큰 종류
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // 토큰 종류
 			ignoreExpiration: false, // 만료된 토큰 사용 불가 옵션
 			secretOrKey: process.env['JWT_SECRET'], // jwt secret key
 		});
-	}
-
-	async validate(payload: any) {
-		const { id, accountId, name, email, phone } = payload;
-		return { id, accountId, name, email, phone };
 	}
 }

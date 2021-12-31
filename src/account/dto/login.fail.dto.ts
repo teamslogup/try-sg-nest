@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export type ErrorValue = {
-	value: string;
-};
-
 // login fail response dto
 export class LoginFailDto {
 	@IsString()
@@ -30,5 +26,5 @@ export class LoginFailDto {
 		description: '존재하지 않는 회원일 경우 사용자가 입력한 잘못된 정보',
 		required: true,
 	})
-	value?: ErrorValue;
+	errorCount?: number;
 }

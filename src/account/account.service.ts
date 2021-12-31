@@ -1,17 +1,24 @@
-import { BadRequestException, ConflictException, HttpException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	ForbiddenException,
+	HttpException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Accounts } from '../entities/Accounts';
 import { Repository } from 'typeorm';
 import { JoinRequestDto } from './dto/join.request.dto';
 import bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { LoginUserDto } from './dto/login.user.dto';
+import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AccountService {
 	constructor(
 		@InjectRepository(Accounts)
-		private accountRepository: Repository<Accounts>,
-		private jwtService: JwtService,
+		private accountRepository: Repository<Accounts>, // private jwtService: JwtService,
 	) {}
 
 	async checkDuplicationId(userId: string) {
@@ -140,16 +147,79 @@ export class AccountService {
 		console.log('userInfo:', userInfo);
 	}
 
-	// TODO: 사용자 정보 인증 성공
-	async logIn(user: any) {
+	async logIn(user: LoginUserDto, res) {
+		const userInfo = await this.accountRepository.findOne({ where: { userId: user.userId } });
+
+		// TODO: 없는 유저일 경우
+		if (!userInfo) {
+			throw new ForbiddenException({
+				code: '',
+				message: '존재하지 않는 회원입니다.',
+				value: { accountId: user.userId },
+			});
+		}
+
+		// TODO: 잘못된 사용자 정보를 받았을 때(비밀번호 인증 실패)
+		const isMatch = await bcrypt.compare(user.password, userInfo.password);
+		const returnPwError = (errorCount: number): object => {
+			const addMessage: string = errorCount < 3 ? ', 연속 3회 입력 오류시 로그인이 제한됩니다' : '';
+			return {
+				code: 'wrongPassword',
+				message: `비밀번호를 ${errorCount + 1}회 틀렸습니다${addMessage}.`,
+				errorCount: errorCount + 1,
+			};
+		};
+
+		if (!isMatch && user.errorCount < 3) {
+			const json = await returnPwError(user.errorCount);
+			throw new ForbiddenException(json);
+		}
+		if (user.errorCount >= 3) {
+			throw new ForbiddenException({
+				code: 'lockedSignIn',
+				message: '비밀번호 3회 입력 오류로 인해 잠긴 계정입니다. 본인인증 후 재시도해주세요.',
+			});
+		}
+		delete userInfo.password;
+		delete userInfo.salt;
+
 		const payload = {
-			id: user.id,
-			userId: user.userId /*name: user.name,*/,
-			email: user.email,
-			phone: user.phone,
+			id: userInfo.id,
+			userId: userInfo.userId,
+			name: userInfo.name,
+			email: userInfo.email,
+			phone: userInfo.phone,
 		};
-		return {
-			accessToken: this.jwtService.sign(payload),
-		};
+		const accessToken = jwt.sign(payload, process.env['JWT_SECRET']);
+
+		return res.set({ 'x-auth-token': accessToken }).status(200).json({ row: userInfo });
+	}
+
+	async logOut(req) {
+		const accessToken = req.headers['x-auth-token'];
+		if (!accessToken) {
+			throw new UnauthorizedException({
+				code: 'invalidAuthToken',
+				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
+				value: { 'x-auth-token': null },
+			});
+		}
+
+		throw new HttpException({}, 204);
+	}
+
+	async getProfile(req) {
+		const accessToken = req.headers['x-auth-token'];
+		console.log(accessToken);
+		// TODO: 토큰 verify 에러 핸들링
+		const userInfo = jwt.verify(accessToken, process.env['JWT_SECRET']);
+		if (!userInfo) {
+			throw new UnauthorizedException({
+				code: 'invalidAuthToken',
+				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
+				value: { 'x-auth-token': accessToken },
+			});
+		}
+		throw new HttpException(userInfo, 200);
 	}
 }

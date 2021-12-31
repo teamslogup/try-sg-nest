@@ -8,9 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Accounts } from '../entities/Accounts';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 @Module({
 	imports: [
@@ -18,7 +15,7 @@ dotenv.config();
 		PassportModule,
 		JwtModule.register({
 			secret: process.env['JWT_SECRET'],
-			// signOptions: { expiresIn: '60s' }, -> 논의 후 수정
+			signOptions: { expiresIn: '60s' },
 		}),
 		TypeOrmModule.forFeature([Accounts]),
 	],
