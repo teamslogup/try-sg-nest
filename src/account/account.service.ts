@@ -17,6 +17,10 @@ export class AccountService {
     private jwtService: JwtService
   ) {}
 
+  findOne(id: number) {
+    return this.accountRepository.findOne(id);
+  }
+
   async createAccount(data: SignUpRequestDto, res): Promise<any> {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId: data.accountId },
@@ -167,7 +171,7 @@ export class AccountService {
       inputPayload.value = data.name;
       payload.push(inputPayload);
     }
-    if (!emailPattern.test(data.email)) {
+    if (!emailPattern.test(data.email) && data.email) {
       const inputPayload = errorConstant.signupInvalidEmail;
       inputPayload.value = data.email;
       payload.push(inputPayload);

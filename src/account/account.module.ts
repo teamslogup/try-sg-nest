@@ -10,7 +10,7 @@ import { PostEntity } from "../entities/Post.entity";
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([AccountEntity, PostEntity]),
+    TypeOrmModule.forFeature([AccountEntity]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "3600s" },

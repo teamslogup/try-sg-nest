@@ -1,0 +1,39 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
+import { PostService } from "./post.service";
+import { JwtAuthGuard } from "../common/guards/auth.guard";
+import { CurrentUser } from "../common/decorators/currentUser.decorator";
+import { AccountEntity } from "../entities/Account.entity";
+import { CreatePostRequestDto } from "./dto/createPost.request.dto";
+import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
+
+@Controller("posts")
+export class PostController {
+  constructor(private readonly postService: PostService) {}
+
+  @Get()
+  requestPosts(@Query() query: RequestPostsRequestDto): any {
+    return this.postService.requestPosts(query);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  createPost(
+    @Body() body: CreatePostRequestDto,
+    @CurrentUser() account: AccountEntity
+  ) {
+    return this.postService.createPost(body, account);
+  }
+
+  @Get(":id")
+  requestPostOne(@Param("id") id: number) {
+    return this.postService.requestPostOne(id);
+  }
+}

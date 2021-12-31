@@ -3,11 +3,8 @@ import {
   Controller,
   Delete,
   Get,
-  Headers,
-  HttpException,
   Param,
   Post,
-  Req,
   Res,
   UseGuards,
 } from "@nestjs/common";
@@ -56,7 +53,7 @@ export class AccountController {
   }
 
   @Get("id-duplication/:accountId")
-  validateUser(@Param("accountId") accountId: string, @Res() res): any {
+  duplicateUser(@Param("accountId") accountId: string, @Res() res): any {
     return this.accountService.duplicateAccountId(accountId, res);
   }
 }
