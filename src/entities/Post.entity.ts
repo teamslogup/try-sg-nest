@@ -24,7 +24,7 @@ export class PostEntity extends CoreEntity {
     example: ["image1", "images2"],
     description: "images",
   })
-  @Column({ name: "images", length: 200 })
+  @Column({ name: "images", length: 200, nullable: true })
   images: string;
 
   @Column("varchar", { name: "author" })
