@@ -22,11 +22,13 @@ import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "../multerOptions";
 import { PostEntity } from "../entities/Post.entity";
+import { ApiOperation } from "@nestjs/swagger";
 
 @Controller("posts")
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @ApiOperation({ summary: "게시물 목록조회" })
   @Get()
   requestPosts(
     @Query() query: RequestPostsRequestDto
@@ -34,6 +36,7 @@ export class PostController {
     return this.postService.requestPosts(query);
   }
 
+  @ApiOperation({ summary: "게시물 등록" })
   @Post()
   @UseGuards(JwtAuthGuard)
   createPost(
@@ -43,6 +46,7 @@ export class PostController {
     return this.postService.createPost(body, account);
   }
 
+  @ApiOperation({ summary: "게시물 단일조회" })
   @Get(":id")
   requestPostOne(
     @Param("id") id: number
@@ -50,6 +54,7 @@ export class PostController {
     return this.postService.requestPostOne(id);
   }
 
+  @ApiOperation({ summary: "게시물 수정" })
   @Put(":id")
   @UseGuards(JwtAuthGuard)
   updatePost(
@@ -60,6 +65,7 @@ export class PostController {
     return this.postService.updatePost(id, body, user.id);
   }
 
+  @ApiOperation({ summary: "게시물 삭제" })
   @Delete(":id")
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
@@ -75,6 +81,7 @@ export class PostController {
 export class ImageController {
   constructor(private postService: PostService) {}
 
+  @ApiOperation({ summary: "이미지 업로드" })
   @UseInterceptors(FileInterceptor("image", multerOptions))
   @Post("images")
   uploadImage(@UploadedFile() file: Express.Multer.File): Object {

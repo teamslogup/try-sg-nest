@@ -16,11 +16,14 @@ import { JwtAuthGuard } from "../common/guards/auth.guard";
 import { CurrentUser } from "../common/decorators/currentUser.decorator";
 import { AccountEntity } from "../entities/Account.entity";
 import { CurrentToken } from "../common/decorators/currenToken.decorator";
+import { checkMessageAuthToken } from "./dto/signUpDto/MessageAuthToken.request.dto";
+import { ApiOperation } from "@nestjs/swagger";
 
 @Controller("account")
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
+  @ApiOperation({ summary: "회원가입" })
   @Post("users")
   async createUser(
     @Body() data: SignUpRequestDto
@@ -28,6 +31,7 @@ export class AccountController {
     return await this.accountService.createAccount(data);
   }
 
+  @ApiOperation({ summary: "로그인" })
   @Post("sessions/me")
   async loginUser(
     @Body() data: loginRequestDto,
@@ -36,6 +40,7 @@ export class AccountController {
     return await this.accountService.loginAccount(data, res);
   }
 
+  @ApiOperation({ summary: "내정보 조회" })
   @Get("sessions/me")
   @UseGuards(JwtAuthGuard)
   findUser(
@@ -46,6 +51,7 @@ export class AccountController {
     return res.set({ "x-auth-token": token }).json({ row: account });
   }
 
+  @ApiOperation({ summary: "로그아웃" })
   @Delete("sessions/me")
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
@@ -53,6 +59,7 @@ export class AccountController {
     return;
   }
 
+  @ApiOperation({ summary: "아이디 중복확인" })
   @Get("id-duplication/:accountId")
   @HttpCode(204)
   async duplicateAccountId(
@@ -66,17 +73,19 @@ export class AccountController {
 export class SenderController {
   constructor(private readonly accountService: AccountService) {}
 
+  @ApiOperation({ summary: "문자 인증코드 발송" })
   @Post("message-auth-tokens")
   @HttpCode(204)
-  sendMessageAuthToken(@Body("phone") phone: string): void {
-    return this.accountService.sendMessage(phone);
+  sendMessageAuthToken(@Body() body: checkMessageAuthToken): void {
+    return this.accountService.sendMessage(body.phone);
   }
 
+  @ApiOperation({ summary: "문자 인증코드 확인" })
   @Post("message-auth-tokens/:authCode/verification")
   async checkMessageAuthToken(
-    @Body("phone") phone: string,
+    @Body() body: checkMessageAuthToken,
     @Param("authCode") authCode: string
   ): Promise<Object> {
-    return this.accountService.checkMessage(phone, authCode);
+    return this.accountService.checkMessage(body.phone, authCode);
   }
 }

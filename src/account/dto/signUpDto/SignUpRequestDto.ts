@@ -17,6 +17,7 @@ export class SignUpRequestDto extends CoreEntity {
   @ApiProperty({
     example: "test@gmail.com",
     description: "email",
+    nullable: true,
   })
   public email: string;
 

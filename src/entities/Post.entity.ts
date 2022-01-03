@@ -17,7 +17,7 @@ export class PostEntity extends CoreEntity {
     example: "write content",
     description: "contents",
   })
-  @Column("varchar", { name: "contents", length: 2000 })
+  @Column("varchar", { name: "contents", length: 2000, nullable: true })
   contents: string;
 
   @ApiProperty({

@@ -11,12 +11,14 @@ export class CreatePostRequestDto {
     example:
       "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
     description: "Post contents",
+    nullable: true,
   })
   public contents: string;
 
   @ApiProperty({
     example: [".../image1.jpg"],
     description: "images array",
+    nullable: true,
   })
   public images: string;
 }
