@@ -14,20 +14,22 @@ export class PostService {
     @InjectRepository(PostEntity) private postRepository: Repository<PostEntity>
   ) {}
 
-  async createPost(body: CreatePostRequestDto, account: AccountEntity) {
+  async createPost(body: CreatePostRequestDto, currUserId: AccountEntity) {
     try {
       if (!body.title) {
         throw new HttpException([errorConstant.postTitleError], 404);
       }
-      body.images = JSON.stringify(body.images);
-      const { id, name } = account;
+      const images = this.savePostImage(body.images);
+      const { id, name } = currUserId;
       const post = this.postRepository.create({
         ...body,
+        images,
         author: name,
         accountId: id,
       });
       const createPost = await this.postRepository.save(post);
       const { accountId, ...payload } = createPost;
+      payload.images = JSON.parse(payload.images);
       return payload;
     } catch (err) {
       throw new NotFoundException();
@@ -36,14 +38,16 @@ export class PostService {
 
   async requestPosts(query: RequestPostsRequestDto) {
     try {
-      const posts = await this.postRepository.find({
+      const findPosts = await this.postRepository.find({
         order: { id: "DESC" },
         skip: query.page * query.limit,
         take: query.limit,
         where: query.keyword && { title: Like(`%${query.keyword}%`) },
       });
-      return posts;
-      return;
+      for (let post of findPosts) {
+        post.images = JSON.parse(post.images);
+      }
+      return findPosts;
     } catch (err) {
       throw new NotFoundException();
     }
@@ -58,21 +62,34 @@ export class PostService {
   }
 
   async updatePost(id: number, body: UpdatePostRequestDto, currUserId: number) {
-    try {
-      const post = await this.requestPostOne(id);
-      if (post.id !== currUserId) {
-        const payload = errorConstant.postUserError;
-        throw new HttpException([payload], 403);
-      }
-      if (!body.title && body.title !== undefined) {
-        const payload = errorConstant.postTitleError;
-        throw new HttpException([payload], 400);
-      }
-
-      const updatePost = { ...post, ...body };
-      return await this.postRepository.save(updatePost);
-    } catch (err) {
-      throw new NotFoundException();
+    const post = await this.requestPostOne(id);
+    if (post.accountId !== currUserId) {
+      const payload = errorConstant.postUserError;
+      throw new HttpException([payload], 403);
     }
+    if (body.title === null || body.title === "") {
+      const payload = errorConstant.postTitleError;
+      throw new HttpException([payload], 400);
+    }
+
+    const images = this.savePostImage(body.images);
+    const updatePost = { ...post, ...body, images };
+    const savePost = await this.postRepository.save(updatePost);
+    savePost.images = JSON.parse(savePost.images);
+    return savePost;
+  }
+
+  savePostImage(images: string): string {
+    let changeImages = "[";
+    if (images) {
+      for (let i = 0; i < images.length; i++) {
+        changeImages += JSON.stringify(images[i]);
+        if (i < images.length - 1) {
+          changeImages += ",";
+        }
+      }
+    }
+    changeImages += "]";
+    return changeImages;
   }
 }
