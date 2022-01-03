@@ -16,6 +16,8 @@ import { SenderService } from './sender/sender.service';
 import { PostsController } from './posts/posts.controller';
 import { PostsService } from './posts/posts.service';
 import { PostsModule } from './posts/posts.module';
+import { TokenFunction } from './utils/tokenFunction';
+import { PageRequest } from './posts/pageRequest';
 
 @Module({
 	imports: [
@@ -27,9 +29,11 @@ import { PostsModule } from './posts/posts.module';
 		AccountModule,
 		SenderModule,
 		PostsModule,
+		TokenFunction,
+		PageRequest,
 	],
 	controllers: [AppController, AccountController, SenderController, PostsController],
-	providers: [AppService, AccountService, SenderService, PostsService],
+	providers: [AppService, AccountService, SenderService, PostsService, TokenFunction, PageRequest],
 })
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {

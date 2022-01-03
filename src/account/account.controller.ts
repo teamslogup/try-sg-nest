@@ -5,7 +5,6 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JoinRequestDto } from './dto/join.request.dto';
 import { UserDto } from '../common/dto/user.dto';
 import { LoginFailDto } from './dto/login.fail.dto';
-// import { LocalAuthGuard } from '../auth/guards/local-auth.guard';
 import { LoginUserDto } from './dto/login.user.dto';
 
 @ApiTags('Account')
@@ -15,7 +14,6 @@ export class AccountController {
 	constructor(private AccountService: AccountService) {}
 
 	@ApiOperation({ summary: '유저 정보 조회' })
-	// @UseGuards(JwtAuthGuard)
 	@Get('sessions/me')
 	async getProfile(@Req() req) {
 		await this.AccountService.getProfile(req);
@@ -32,7 +30,6 @@ export class AccountController {
 		description: '로그인 실패',
 	})
 	@ApiOperation({ summary: '로그인' })
-	// @UseGuards(LocalAuthGuard)
 	@Post('/sessions/me')
 	async logIn(@Body() data: LoginUserDto, @Res() res) {
 		await this.AccountService.logIn(data, res);

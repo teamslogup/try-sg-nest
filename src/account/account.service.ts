@@ -12,13 +12,14 @@ import { Repository } from 'typeorm';
 import { JoinRequestDto } from './dto/join.request.dto';
 import bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login.user.dto';
-import jwt from 'jsonwebtoken';
+import { TokenFunction } from '../utils/tokenFunction';
 
 @Injectable()
 export class AccountService {
 	constructor(
 		@InjectRepository(Accounts)
-		private accountRepository: Repository<Accounts>, // private jwtService: JwtService,
+		private accountRepository: Repository<Accounts>, // private jwtService: JwtService, //
+		private tokenFunction: TokenFunction,
 	) {}
 
 	async checkDuplicationId(userId: string) {
@@ -145,6 +146,7 @@ export class AccountService {
 		});
 
 		console.log('userInfo:', userInfo);
+		throw new HttpException(userInfo, 201);
 	}
 
 	async logIn(user: LoginUserDto, res) {
@@ -190,7 +192,7 @@ export class AccountService {
 			email: userInfo.email,
 			phone: userInfo.phone,
 		};
-		const accessToken = jwt.sign(payload, process.env['JWT_SECRET'], { expiresIn: '30s' });
+		const accessToken = await this.tokenFunction.generateAccessToken(payload);
 
 		return res.set({ 'x-auth-token': accessToken }).status(200).json({ row: userInfo });
 	}
@@ -209,17 +211,14 @@ export class AccountService {
 	}
 
 	async getProfile(req) {
-		const accessToken = req.headers['x-auth-token'];
-		console.log(accessToken);
-		// TODO: 토큰 verify 에러 핸들링
-		const userInfo = jwt.verify(accessToken, process.env['JWT_SECRET']);
-		if (!userInfo) {
+		const data = await this.tokenFunction.isAuthorized(req);
+		if (!data.userInfo) {
 			throw new UnauthorizedException({
 				code: 'invalidAuthToken',
 				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
-				value: { 'x-auth-token': accessToken },
+				value: { 'x-auth-token': data.accessToken },
 			});
 		}
-		throw new HttpException(userInfo, 200);
+		throw new HttpException(data.userInfo, 200);
 	}
 }
