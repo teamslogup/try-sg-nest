@@ -32,7 +32,7 @@ export class AccountController {
   async loginUser(
     @Body() data: loginRequestDto,
     @Res() res
-  ): Promise<Response> {
+  ): Promise<AccountEntity> {
     return await this.accountService.loginAccount(data, res);
   }
 
@@ -42,21 +42,23 @@ export class AccountController {
     @CurrentUser() account: AccountEntity,
     @CurrentToken() token: string,
     @Res() res
-  ): Response {
+  ): AccountEntity {
     return res.set({ "x-auth-token": token }).json({ row: account });
   }
 
   @Delete("sessions/me")
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
-  logOutUser(): Response {
+  logOutUser(): void {
     return;
   }
 
   @Get("id-duplication/:accountId")
   @HttpCode(204)
-  duplicateAccountId(@Param("accountId") accountId: string): any {
-    return this.accountService.duplicateAccountId(accountId);
+  async duplicateAccountId(
+    @Param("accountId") accountId: string
+  ): Promise<void> {
+    return await this.accountService.duplicateAccountId(accountId);
   }
 }
 
@@ -66,15 +68,15 @@ export class SenderController {
 
   @Post("message-auth-tokens")
   @HttpCode(204)
-  sendMessageAuthToken(@Body("phone") phone: string, @Res() res): any {
-    return this.accountService.sendMessage(phone, res);
+  sendMessageAuthToken(@Body("phone") phone: string): void {
+    return this.accountService.sendMessage(phone);
   }
 
   @Post("message-auth-tokens/:authCode/verification")
   async checkMessageAuthToken(
     @Body("phone") phone: string,
     @Param("authCode") authCode: string
-  ): Promise<any> {
+  ): Promise<Object> {
     return this.accountService.checkMessage(phone, authCode);
   }
 }

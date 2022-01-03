@@ -46,7 +46,7 @@ export class AccountService {
     return this.accountRepository.findOne({ where: { accountId } });
   }
 
-  async loginAccount(data: loginRequestDto, res): Promise<Response> {
+  async loginAccount(data: loginRequestDto, res): Promise<AccountEntity> {
     const { accountId, password } = data;
     const account = await this.findOneByAccountId(accountId);
     if (!account) {
@@ -106,7 +106,7 @@ export class AccountService {
     return res.set({ "x-auth-token": jwtToken }).json({ row: account });
   }
 
-  async duplicateAccountId(accountId: string): Promise<any> {
+  async duplicateAccountId(accountId: string): Promise<void> {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId },
     });
@@ -117,7 +117,7 @@ export class AccountService {
     throw new HttpException([payload], 409);
   }
 
-  sendMessage(phone: string) {
+  sendMessage(phone: string): void {
     const phonePattern = /^01[0-9]{8,9}$/;
     if (!phonePattern.test(phone)) {
       const payload = errorConstant.sendMessageWrongPhone;
@@ -130,7 +130,7 @@ export class AccountService {
     return;
   }
 
-  async checkMessage(phone: string, authCode: string): Promise<any> {
+  async checkMessage(phone: string, authCode: string): Promise<Object> {
     if (authCode !== "0531") {
       const payload = errorConstant.sendMessageInvalidCode;
       payload.value = authCode;

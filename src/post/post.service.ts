@@ -15,7 +15,10 @@ export class PostService {
     @InjectRepository(PostEntity) private postRepository: Repository<PostEntity>
   ) {}
 
-  async createPost(body: CreatePostRequestDto, currUserId: AccountEntity) {
+  async createPost(
+    body: CreatePostRequestDto,
+    currUserId: AccountEntity
+  ): Promise<Omit<PostEntity, "accountId">> {
     if (!body.title) {
       throw new HttpException([errorConstant.postTitleError], 404);
     }
@@ -33,7 +36,9 @@ export class PostService {
     return payload;
   }
 
-  async requestPosts(query: RequestPostsRequestDto) {
+  async requestPosts(
+    query: RequestPostsRequestDto
+  ): Promise<Omit<PostEntity[], "accountId">> {
     try {
       const findPosts = await this.postRepository.find({
         order: { id: "DESC" },
@@ -42,6 +47,7 @@ export class PostService {
         where: query.keyword && { title: Like(`%${query.keyword}%`) },
       });
       for (let post of findPosts) {
+        delete post.accountId;
         post.images = JSON.parse(post.images);
       }
       return findPosts;
@@ -50,16 +56,22 @@ export class PostService {
     }
   }
 
-  async requestPostOne(id: number) {
+  async requestPostOne(id: number): Promise<Omit<PostEntity, "accountId">> {
     try {
-      return await this.postRepository.findOne(id);
+      const { accountId, ...postOne } = await this.postRepository.findOne(id);
+      postOne.images = JSON.parse(postOne.images);
+      return postOne;
     } catch (err) {
       throw new NotFoundException();
     }
   }
 
-  async updatePost(id: number, body: UpdatePostRequestDto, currUserId: number) {
-    const post = await this.requestPostOne(id);
+  async updatePost(
+    id: number,
+    body: UpdatePostRequestDto,
+    currUserId: number
+  ): Promise<Omit<PostEntity, "accountId">> {
+    const post = await this.postRepository.findOne(id);
     if (post.accountId !== currUserId) {
       const payload = errorConstant.postUserError;
       throw new HttpException([payload], 403);
@@ -77,7 +89,7 @@ export class PostService {
   }
 
   async deletePost(id: number, currUserId: number): Promise<void> {
-    const post = await this.requestPostOne(id);
+    const post = await this.postRepository.findOne(id);
     if (post.accountId !== currUserId) {
       const payload = errorConstant.postUserError;
       throw new HttpException([payload], 403);
@@ -86,7 +98,7 @@ export class PostService {
     return;
   }
 
-  async uploadImage(file: Express.Multer.File) {
+  uploadImage(file: Express.Multer.File): Object {
     const createURLFile = createImageURL(file);
 
     return { url: createURLFile };
