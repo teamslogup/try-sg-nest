@@ -21,13 +21,16 @@ import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
 import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "../multerOptions";
+import { PostEntity } from "../entities/Post.entity";
 
 @Controller("posts")
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  requestPosts(@Query() query: RequestPostsRequestDto): any {
+  requestPosts(
+    @Query() query: RequestPostsRequestDto
+  ): Promise<Omit<PostEntity[], "accountId">> {
     return this.postService.requestPosts(query);
   }
 
@@ -36,12 +39,14 @@ export class PostController {
   createPost(
     @Body() body: CreatePostRequestDto,
     @CurrentUser() account: AccountEntity
-  ) {
+  ): Promise<Omit<PostEntity, "accountId">> {
     return this.postService.createPost(body, account);
   }
 
   @Get(":id")
-  requestPostOne(@Param("id") id: number) {
+  requestPostOne(
+    @Param("id") id: number
+  ): Promise<Omit<PostEntity, "accountId">> {
     return this.postService.requestPostOne(id);
   }
 
@@ -51,7 +56,7 @@ export class PostController {
     @Param("id") id: number,
     @Body() body: UpdatePostRequestDto,
     @CurrentUser() user: AccountEntity
-  ) {
+  ): Promise<Omit<PostEntity, "accountId">> {
     return this.postService.updatePost(id, body, user.id);
   }
 
@@ -72,7 +77,7 @@ export class ImageController {
 
   @UseInterceptors(FileInterceptor("image", multerOptions))
   @Post("images")
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
+  uploadImage(@UploadedFile() file: Express.Multer.File): Object {
     return this.postService.uploadImage(file);
   }
 }
