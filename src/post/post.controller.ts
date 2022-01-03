@@ -3,12 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
-  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
@@ -17,6 +19,8 @@ import { AccountEntity } from "../entities/Account.entity";
 import { CreatePostRequestDto } from "./dto/createPost.request.dto";
 import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
 import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { multerOptions } from "../multerOptions";
 
 @Controller("posts")
 export class PostController {
@@ -53,11 +57,22 @@ export class PostController {
 
   @Delete(":id")
   @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
   deletePost(
     @Param("id") id: number,
-    @CurrentUser() user: AccountEntity,
-    @Res() res
-  ) {
-    return this.postService.deletePost(id, user.id, res);
+    @CurrentUser() user: AccountEntity
+  ): Promise<void> {
+    return this.postService.deletePost(id, user.id);
+  }
+}
+
+@Controller("uploader")
+export class ImageController {
+  constructor(private postService: PostService) {}
+
+  @UseInterceptors(FileInterceptor("image", multerOptions))
+  @Post("images")
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.postService.uploadImage(file);
   }
 }

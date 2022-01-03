@@ -87,9 +87,15 @@ export const errorConstant = {
     code: "requireCert",
     msg: "인증토큰을 입력해주세요",
   },
-  signupEmptyCert: {
-    code: "requireCert",
-    msg: "인증토큰을 입력해주세요",
+  signupWrongCert: {
+    code: "wrongCert",
+    msg: "잘못된 인증토큰입니다.",
+    value: null,
+  },
+  signupExpiredCert: {
+    code: "expiredCert",
+    msg: "인증토큰이 만료되었습니다.",
+    value: null,
   },
   postTitleError: {
     code: "requireTitle",

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Res,
@@ -22,10 +23,9 @@ export class AccountController {
 
   @Post("users")
   async createUser(
-    @Body() data: SignUpRequestDto,
-    @Res() res
-  ): Promise<Response> {
-    return await this.accountService.createAccount(data, res);
+    @Body() data: SignUpRequestDto
+  ): Promise<Omit<AccountEntity, "password">> {
+    return await this.accountService.createAccount(data);
   }
 
   @Post("sessions/me")
@@ -48,13 +48,15 @@ export class AccountController {
 
   @Delete("sessions/me")
   @UseGuards(JwtAuthGuard)
-  logOutUser(@Res() res): Response {
-    return res.status(204).json();
+  @HttpCode(204)
+  logOutUser(): Response {
+    return;
   }
 
   @Get("id-duplication/:accountId")
-  duplicateUser(@Param("accountId") accountId: string, @Res() res): any {
-    return this.accountService.duplicateAccountId(accountId, res);
+  @HttpCode(204)
+  duplicateAccountId(@Param("accountId") accountId: string): any {
+    return this.accountService.duplicateAccountId(accountId);
   }
 }
 
@@ -63,16 +65,16 @@ export class SenderController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post("message-auth-tokens")
+  @HttpCode(204)
   sendMessageAuthToken(@Body("phone") phone: string, @Res() res): any {
     return this.accountService.sendMessage(phone, res);
   }
 
   @Post("message-auth-tokens/:authCode/verification")
-  checkMessageAuthToken(
+  async checkMessageAuthToken(
     @Body("phone") phone: string,
-    @Param("authCode") authCode: string,
-    @Res() res
-  ): any {
-    return this.accountService.checkMessage(phone, authCode, res);
+    @Param("authCode") authCode: string
+  ): Promise<any> {
+    return this.accountService.checkMessage(phone, authCode);
   }
 }

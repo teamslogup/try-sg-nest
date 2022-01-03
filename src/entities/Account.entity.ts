@@ -35,7 +35,6 @@ export class AccountEntity extends CoreEntity {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
   @Column("varchar", { name: "password", length: 150, select: false })
   password: string;
 

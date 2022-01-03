@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -21,7 +21,9 @@ export class AccountService {
     return this.accountRepository.findOne(id);
   }
 
-  async createAccount(data: SignUpRequestDto, res): Promise<any> {
+  async createAccount(
+    data: SignUpRequestDto
+  ): Promise<Omit<AccountEntity, "password">> {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId: data.accountId },
     });
@@ -35,17 +37,16 @@ export class AccountService {
     const { cert, ...accountInfo } = data;
     const createAccount = await this.accountRepository.create(accountInfo);
     createAccount.password = await bcrypt.hash(data.password, 10);
-    await this.accountRepository.save(createAccount);
-    return res.status(204).json();
-
-    // throw new HttpException(payload, 404);
+    const saveAccount = await this.accountRepository.save(createAccount);
+    const { password, ...accountParam } = saveAccount;
+    return accountParam;
   }
 
   findOneByAccountId(accountId: string): Promise<AccountEntity> {
     return this.accountRepository.findOne({ where: { accountId } });
   }
 
-  async loginAccount(data: loginRequestDto, res) {
+  async loginAccount(data: loginRequestDto, res): Promise<Response> {
     const { accountId, password } = data;
     const account = await this.findOneByAccountId(accountId);
     if (!account) {
@@ -105,18 +106,18 @@ export class AccountService {
     return res.set({ "x-auth-token": jwtToken }).json({ row: account });
   }
 
-  async duplicateAccountId(accountId: string, res) {
+  async duplicateAccountId(accountId: string): Promise<any> {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId },
     });
     const payload = errorConstant.duplicatedId;
     if (!duplicateId) {
-      return res.status(204).json();
+      return;
     }
-    throw new ConflictException(payload);
+    throw new HttpException([payload], 409);
   }
 
-  sendMessage(phone: string, res) {
+  sendMessage(phone: string) {
     const phonePattern = /^01[0-9]{8,9}$/;
     if (!phonePattern.test(phone)) {
       const payload = errorConstant.sendMessageWrongPhone;
@@ -126,10 +127,10 @@ export class AccountService {
     if (!phone) {
       throw new HttpException([errorConstant.sendMessageEmptyPhone], 400);
     }
-    return res.status(204).json();
+    return;
   }
 
-  checkMessage(phone: string, authCode: string, res) {
+  async checkMessage(phone: string, authCode: string): Promise<any> {
     if (authCode !== "0531") {
       const payload = errorConstant.sendMessageInvalidCode;
       payload.value = authCode;
@@ -145,10 +146,12 @@ export class AccountService {
       throw new HttpException([errorConstant.sendMessageEmptyPhone], 400);
     }
     //TODO: +3분 더해주기 ...
-    const time = Date();
+    const time = new Date();
+    time.setHours(time.getHours() + 9);
+    time.setMinutes(time.getMinutes() + 3);
     const row = { cert: "abcd123", certExpiredAt: time };
     console.log(row);
-    return res.status(201).json({ row });
+    return [row];
   }
 
   errorCheckSignUp(data: SignUpRequestDto) {
@@ -160,7 +163,11 @@ export class AccountService {
     const idPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{6,}$/;
     const phonePattern = /^01[0-9]{8,9}$/;
     const payload = [];
-
+    if (data.cert !== "abcd123") {
+      const inputPayload = errorConstant.signupWrongCert;
+      inputPayload.value = data.cert;
+      payload.push(inputPayload);
+    }
     if (!idPattern.test(data.accountId)) {
       const inputPayload = errorConstant.signupInvalidId;
       inputPayload.value = data.accountId;
@@ -197,7 +204,7 @@ export class AccountService {
       payload.push(errorConstant.signupEmptyPassword);
     }
     if (!data.cert) {
-      payload.push(errorConstant.signupEmptyCert);
+      payload.push(errorConstant.signupEmptyToken);
     }
 
     if (payload.length > 0) {

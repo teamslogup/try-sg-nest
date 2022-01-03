@@ -20,12 +20,16 @@ export class TransformInterceptor<T>
     next: CallHandler
   ): Observable<Response<T>> {
     // @ts-ignore
-    return next
-      .handle()
-      .pipe(
-        map((data) =>
-          data.length > 1 ? { row: data, count: data.length } : { row: data }
-        )
-      );
+    return next.handle().pipe(
+      map((data) =>
+        data !== undefined
+          ? data.length > 1
+            ? { row: data, count: data.length }
+            : {
+                row: data,
+              }
+          : { row: data }
+      )
+    );
   }
 }

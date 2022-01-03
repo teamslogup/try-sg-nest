@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/upload/
 
 # Logs
 logs
@@ -25,7 +26,6 @@ lerna-debug.log*
 .prettierrc
 .project
 .classpath
-.prettierrc
 .eslintrc.js
 .c9/
 *.launch
@@ -37,4 +37,3 @@ lerna-debug.log*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-!.vscode/extensions.json

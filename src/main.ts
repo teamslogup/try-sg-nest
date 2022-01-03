@@ -4,6 +4,8 @@ import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { HttpExceptionFilter } from "./http.exception.filter";
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor";
+import express from "express";
+import { join } from "path";
 
 declare const module: any;
 
@@ -18,6 +20,8 @@ async function bootstrap() {
       transform: true,
     })
   );
+
+  app.use("/upload", express.static(join(__dirname, "../upload")));
 
   const config = new DocumentBuilder()
     .setTitle("APIS")
