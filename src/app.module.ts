@@ -13,6 +13,9 @@ import { Posts } from './entities/Posts';
 import { SenderController } from './sender/sender.controller';
 import { SenderModule } from './sender/sender.module';
 import { SenderService } from './sender/sender.service';
+import { PostsController } from './posts/posts.controller';
+import { PostsService } from './posts/posts.service';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
 	imports: [
@@ -23,9 +26,10 @@ import { SenderService } from './sender/sender.service';
 		TypeOrmModule.forFeature([Accounts, Posts]),
 		AccountModule,
 		SenderModule,
+		PostsModule,
 	],
-	controllers: [AppController, AccountController, SenderController],
-	providers: [AppService, AccountService, SenderService],
+	controllers: [AppController, AccountController, SenderController, PostsController],
+	providers: [AppService, AccountService, SenderService, PostsService],
 })
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): any {

@@ -190,7 +190,7 @@ export class AccountService {
 			email: userInfo.email,
 			phone: userInfo.phone,
 		};
-		const accessToken = jwt.sign(payload, process.env['JWT_SECRET']);
+		const accessToken = jwt.sign(payload, process.env['JWT_SECRET'], { expiresIn: '30s' });
 
 		return res.set({ 'x-auth-token': accessToken }).status(200).json({ row: userInfo });
 	}
