@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreatePostRequestDto {
+export class UpdatePostRequestDto {
   @ApiProperty({
     example: "Welcome to slogup!",
     description: "Post Title",
