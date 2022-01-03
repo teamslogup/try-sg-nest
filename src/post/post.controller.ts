@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -13,6 +14,7 @@ import { CurrentUser } from "../common/decorators/currentUser.decorator";
 import { AccountEntity } from "../entities/Account.entity";
 import { CreatePostRequestDto } from "./dto/createPost.request.dto";
 import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
+import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
 
 @Controller("posts")
 export class PostController {
@@ -35,5 +37,15 @@ export class PostController {
   @Get(":id")
   requestPostOne(@Param("id") id: number) {
     return this.postService.requestPostOne(id);
+  }
+
+  @Put(":id")
+  @UseGuards(JwtAuthGuard)
+  updatePost(
+    @Param("id") id: number,
+    @Body() body: UpdatePostRequestDto,
+    @CurrentUser() user: AccountEntity
+  ) {
+    return this.postService.updatePost(id, body, user.id);
   }
 }
