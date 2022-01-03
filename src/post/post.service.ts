@@ -7,6 +7,7 @@ import { CreatePostRequestDto } from "./dto/createPost.request.dto";
 import { AccountEntity } from "../entities/Account.entity";
 import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
 import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
+import { createImageURL } from "../multerOptions";
 
 @Injectable()
 export class PostService {
@@ -15,25 +16,21 @@ export class PostService {
   ) {}
 
   async createPost(body: CreatePostRequestDto, currUserId: AccountEntity) {
-    try {
-      if (!body.title) {
-        throw new HttpException([errorConstant.postTitleError], 404);
-      }
-      const images = this.savePostImage(body.images);
-      const { id, name } = currUserId;
-      const post = this.postRepository.create({
-        ...body,
-        images,
-        author: name,
-        accountId: id,
-      });
-      const createPost = await this.postRepository.save(post);
-      const { accountId, ...payload } = createPost;
-      payload.images = JSON.parse(payload.images);
-      return payload;
-    } catch (err) {
-      throw new NotFoundException();
+    if (!body.title) {
+      throw new HttpException([errorConstant.postTitleError], 404);
     }
+    const images = this.savePostImage(body.images);
+    const { id, name } = currUserId;
+    const post = this.postRepository.create({
+      ...body,
+      images,
+      author: name,
+      accountId: id,
+    });
+    const createPost = await this.postRepository.save(post);
+    const { accountId, ...payload } = createPost;
+    payload.images = JSON.parse(payload.images);
+    return payload;
   }
 
   async requestPosts(query: RequestPostsRequestDto) {
@@ -79,14 +76,20 @@ export class PostService {
     return savePost;
   }
 
-  async deletePost(id: number, currUserId: number, res) {
+  async deletePost(id: number, currUserId: number): Promise<void> {
     const post = await this.requestPostOne(id);
     if (post.accountId !== currUserId) {
       const payload = errorConstant.postUserError;
       throw new HttpException([payload], 403);
     }
     await this.postRepository.delete(id);
-    return res.status(204).json();
+    return;
+  }
+
+  async uploadImage(file: Express.Multer.File) {
+    const createURLFile = createImageURL(file);
+
+    return { url: createURLFile };
   }
 
   savePostImage(images: string): string {
