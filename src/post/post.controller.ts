@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from "@nestjs/common";
 import { PostService } from "./post.service";
@@ -47,5 +49,15 @@ export class PostController {
     @CurrentUser() user: AccountEntity
   ) {
     return this.postService.updatePost(id, body, user.id);
+  }
+
+  @Delete(":id")
+  @UseGuards(JwtAuthGuard)
+  deletePost(
+    @Param("id") id: number,
+    @CurrentUser() user: AccountEntity,
+    @Res() res
+  ) {
+    return this.postService.deletePost(id, user.id, res);
   }
 }

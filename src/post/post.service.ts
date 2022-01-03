@@ -79,6 +79,16 @@ export class PostService {
     return savePost;
   }
 
+  async deletePost(id: number, currUserId: number, res) {
+    const post = await this.requestPostOne(id);
+    if (post.accountId !== currUserId) {
+      const payload = errorConstant.postUserError;
+      throw new HttpException([payload], 403);
+    }
+    await this.postRepository.delete(id);
+    return res.status(204).json();
+  }
+
   savePostImage(images: string): string {
     let changeImages = "[";
     if (images) {
