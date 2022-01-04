@@ -1,5 +1,4 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
@@ -13,8 +12,7 @@ import AccountStatusTypes from "../common/types/accountStatusType";
 export class AccountService {
   constructor(
     @InjectRepository(AccountEntity)
-    private accountRepository: Repository<AccountEntity>,
-    private jwtService: JwtService
+    private accountRepository: Repository<AccountEntity>
   ) {}
 
   findOne(id: number) {
@@ -46,8 +44,10 @@ export class AccountService {
     return this.accountRepository.findOne({ where: { accountId } });
   }
 
-  async loginAccount(data: loginRequestDto, res): Promise<AccountEntity> {
-    const { accountId, password } = data;
+  async loginAccount(
+    accountId: string,
+    password: string
+  ): Promise<AccountEntity> {
     const account = await this.findOneByAccountId(accountId);
     if (!account) {
       const payload = errorConstant.loginInvalidAccount;
@@ -102,8 +102,8 @@ export class AccountService {
       id: account.id,
       sub: account.accountId,
     };
-    const jwtToken = this.jwtService.sign(payload);
-    return res.set({ "x-auth-token": jwtToken }).json({ row: account });
+
+    return account;
   }
 
   async duplicateAccountId(accountId: string): Promise<void> {
@@ -150,7 +150,6 @@ export class AccountService {
     time.setHours(time.getHours() + 9);
     time.setMinutes(time.getMinutes() + 3);
     const row = { cert: "abcd123", certExpiredAt: time };
-    console.log(row);
     return [row];
   }
 

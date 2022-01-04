@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CoreEntity } from "src/entities/Core.entity";
 
-export class SignUpRequestDto extends CoreEntity {
+export class SignUpRequestDto {
   @ApiProperty({
     example: "accountId",
     description: "accountId",
