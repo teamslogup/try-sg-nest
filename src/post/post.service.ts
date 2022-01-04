@@ -73,12 +73,10 @@ export class PostService {
   ): Promise<Omit<PostEntity, "accountId">> {
     const post = await this.postRepository.findOne(id);
     if (post.accountId !== currUserId) {
-      const payload = errorConstant.postUserError;
-      throw new HttpException([payload], 403);
+      throw new HttpException([errorConstant.postUserError], 403);
     }
     if (body.title === null || body.title === "") {
-      const payload = errorConstant.postTitleError;
-      throw new HttpException([payload], 400);
+      throw new HttpException([errorConstant.postTitleError], 400);
     }
 
     const images = this.savePostImage(body.images);
@@ -91,8 +89,7 @@ export class PostService {
   async deletePost(id: number, currUserId: number): Promise<void> {
     const post = await this.postRepository.findOne(id);
     if (post.accountId !== currUserId) {
-      const payload = errorConstant.postUserError;
-      throw new HttpException([payload], 403);
+      throw new HttpException([errorConstant.postUserError], 403);
     }
     await this.postRepository.delete(id);
     return;

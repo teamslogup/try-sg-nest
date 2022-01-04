@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  ExecutionContext,
-  HttpException,
-  Res,
-} from "@nestjs/common";
+import { Injectable, ExecutionContext, HttpException } from "@nestjs/common";
 import { errorConstant } from "../constants/error.constant";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -22,7 +17,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     if (err || !user) {
       const payload = errorConstant.TokenError;
       payload.value = this.token;
-      throw new HttpException(payload, 401) || err;
+      throw new HttpException([payload], 401) || err;
     }
     return user;
   }

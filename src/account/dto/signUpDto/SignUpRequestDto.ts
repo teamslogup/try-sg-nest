@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { CoreEntity } from "src/entities/Core.entity";
 
 export class SignUpRequestDto {
   @ApiProperty({
@@ -34,8 +33,8 @@ export class SignUpRequestDto {
   public password: string;
 
   @ApiProperty({
-    example: "password",
-    description: "write your password",
+    example: "abcd123",
+    description: "phone authorization(only use abcd123)",
   })
   public cert: string;
 }

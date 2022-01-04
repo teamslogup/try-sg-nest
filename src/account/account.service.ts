@@ -4,7 +4,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { AccountEntity } from "../entities/Account.entity";
 import { SignUpRequestDto } from "./dto/signUpDto/SignUpRequestDto";
-import { loginRequestDto } from "./dto/signUpDto/login.request.dto";
 import { errorConstant } from "../common/constants/error.constant";
 import AccountStatusTypes from "../common/types/accountStatusType";
 
@@ -27,9 +26,7 @@ export class AccountService {
     });
 
     if (duplicateId) {
-      const payload = [];
-      payload.push(errorConstant.duplicatedId);
-      throw new HttpException(payload, 400);
+      throw new HttpException([errorConstant.duplicatedId], 400);
     }
     this.errorCheckSignUp(data);
     const { cert, ...accountInfo } = data;
@@ -52,12 +49,11 @@ export class AccountService {
     if (!account) {
       const payload = errorConstant.loginInvalidAccount;
       payload.value = { accountId };
-      throw new HttpException(payload, 404);
+      throw new HttpException([payload], 404);
     }
 
     if (account.status === AccountStatusTypes.LOCKED) {
-      const payload = errorConstant.loginLockedSignIn;
-      throw new HttpException(payload, 404);
+      throw new HttpException([errorConstant.loginLockedSignIn], 404);
     }
 
     const accountSelect = await this.accountRepository
@@ -77,31 +73,24 @@ export class AccountService {
     ) {
       account.status = AccountStatusTypes.LOCKED;
       await this.accountRepository.save(account);
-      const payload = errorConstant.loginWrongPasswordThree;
-      throw new HttpException(payload, 404);
+      throw new HttpException([errorConstant.loginWrongPasswordThree], 404);
     } else if (
       !isComparePassword &&
       account.status === AccountStatusTypes.PASSWORDFIRSTFAIL
     ) {
       account.status = AccountStatusTypes.PASSWORDSECONDFAIL;
       await this.accountRepository.save(account);
-      const payload = errorConstant.loginWrongPasswordTwo;
-      throw new HttpException(payload, 404);
+      throw new HttpException([errorConstant.loginWrongPasswordTwo], 404);
     } else if (!isComparePassword) {
       account.status = AccountStatusTypes.PASSWORDFIRSTFAIL;
       await this.accountRepository.save(account);
-      const payload = errorConstant.loginWrongPasswordOne;
-      throw new HttpException(payload, 404);
+      throw new HttpException([errorConstant.loginWrongPasswordOne], 404);
     }
 
     if (account.status !== AccountStatusTypes.ACTIVE) {
       account.status = AccountStatusTypes.ACTIVE;
       await this.accountRepository.save(account);
     }
-    const payload = {
-      id: account.id,
-      sub: account.accountId,
-    };
 
     return account;
   }
@@ -110,14 +99,13 @@ export class AccountService {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId },
     });
-    const payload = errorConstant.duplicatedId;
     if (!duplicateId) {
       return;
     }
-    throw new HttpException([payload], 409);
+    throw new HttpException([errorConstant.duplicatedId], 409);
   }
 
-  sendMessage(phone: string): void {
+  async sendMessage(phone: string): Promise<void> {
     const phonePattern = /^01[0-9]{8,9}$/;
     if (!phonePattern.test(phone)) {
       const payload = errorConstant.sendMessageWrongPhone;
@@ -134,7 +122,7 @@ export class AccountService {
     if (authCode !== "0531") {
       const payload = errorConstant.sendMessageInvalidCode;
       payload.value = authCode;
-      throw new HttpException(payload, 401);
+      throw new HttpException([payload], 401);
     }
     const phonePattern = /^01[0-9]{8,9}$/;
     if (!phonePattern.test(phone)) {
@@ -149,8 +137,7 @@ export class AccountService {
     const time = new Date();
     time.setHours(time.getHours() + 9);
     time.setMinutes(time.getMinutes() + 3);
-    const row = { cert: "abcd123", certExpiredAt: time };
-    return [row];
+    return { cert: "abcd123", certExpiredAt: time };
   }
 
   errorCheckSignUp(data: SignUpRequestDto) {
