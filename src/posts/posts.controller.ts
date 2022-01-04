@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UndefinedToNullInterceptor } from '../common/interceptors/undefinedToNull.interceptor';
 import { PostsService } from './posts.service';
@@ -22,5 +22,15 @@ export class PostsController {
 	@Get()
 	async getPostLists(@Query() query) {
 		await this.PostsService.getPostLists(query);
+	}
+
+	@Put('/:postId')
+	async updatePost(@Param() param, @Body() body, @Req() req) {
+		await this.PostsService.updatePost(param, body, req);
+	}
+
+	@Delete('/:postId')
+	async deletePost(@Param() param) {
+		await this.PostsService.deletePost(param);
 	}
 }

@@ -30,8 +30,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			});
 		}
 		console.log(status, err);
-
 		// 서버 자체 발생 에러
+		// 1개 이상의 데이터 전송시
+		if (Array.isArray(err)) {
+			return response.status(status).json({
+				rows: err[0],
+				count: err[1],
+			});
+		}
 		response.status(status).json({ row: err });
 	}
 }

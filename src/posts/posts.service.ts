@@ -1,10 +1,9 @@
-import { ForbiddenException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posts } from '../entities/Posts';
 import { Accounts } from '../entities/Accounts';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, getRepository, Like, Repository } from 'typeorm';
 import { TokenFunction } from '../utils/tokenFunction';
-import { PageRequest } from './pageRequest';
 
 @Injectable()
 export class PostsService {
@@ -14,7 +13,6 @@ export class PostsService {
 		@InjectRepository(Posts)
 		private postRepository: Repository<Posts>,
 		private tokenFunction: TokenFunction,
-		private pageRequest: PageRequest,
 	) {}
 
 	async post(body, req) {
@@ -54,8 +52,51 @@ export class PostsService {
 
 	async getPostLists(query) {
 		const { page, limit, keyword } = query;
-		// TODO: getOffset 함수 작성
-		const offset = this.pageRequest.getOffset(page);
-		// createQueryBuilder().select(??).from(포스트 테이블).limit(limit).offset(offset);
+		const totalCount = await this.postRepository.count();
+		if (!keyword) {
+			const result = await this.postRepository.find({ skip: page * 12, take: limit });
+			throw new HttpException([result, totalCount], 200);
+		}
+		const data = await getRepository(Posts).find({ title: Like(`%${keyword}%`) });
+		if (!data) {
+			throw new NotFoundException('not found');
+		}
+		throw new HttpException(data, 200);
 	}
+
+	async updatePost(param, body, req) {
+		const { postId } = param;
+		const { title, contents, images } = body;
+		const userInfo = await this.tokenFunction.isAuthorized(req);
+		if (!userInfo) {
+			throw new UnauthorizedException({
+				code: 'invalidAuthToken',
+				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
+				value: { 'x-auth-token': null },
+			});
+		}
+		// TODO: 유저 에러
+
+		if (title === null || !title.length) {
+			throw new ForbiddenException({
+				code: 'requiredTitle',
+				message: '제목을 입력해주세요.',
+				value: {
+					title: title,
+				},
+			});
+		}
+		// TODO: title, contents, images 선택적 수정 api
+		const titleData = title ? title : undefined;
+		const updatedData = await createQueryBuilder()
+			.update(Posts)
+			.set({
+				title: titleData,
+				contents: contents,
+				images: images,
+			})
+			.where('id = :id', { id: postId });
+	}
+
+	async deletePost(param) {}
 }
