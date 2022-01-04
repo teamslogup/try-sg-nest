@@ -30,7 +30,7 @@ export class PostsController {
 	}
 
 	@Delete('/:postId')
-	async deletePost(@Param() param) {
-		await this.PostsService.deletePost(param);
+	async deletePost(@Param() param, @Req() req) {
+		await this.PostsService.deletePost(param, req);
 	}
 }

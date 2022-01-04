@@ -2,7 +2,7 @@ import { ForbiddenException, HttpException, Injectable, NotFoundException, Unaut
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posts } from '../entities/Posts';
 import { Accounts } from '../entities/Accounts';
-import { createQueryBuilder, getRepository, Like, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 import { TokenFunction } from '../utils/tokenFunction';
 
 @Injectable()
@@ -75,9 +75,8 @@ export class PostsService {
 				value: { 'x-auth-token': null },
 			});
 		}
-		// TODO: 유저 에러
 
-		if (title === null || !title.length) {
+		if (title === null || title === '') {
 			throw new ForbiddenException({
 				code: 'requiredTitle',
 				message: '제목을 입력해주세요.',
@@ -86,17 +85,31 @@ export class PostsService {
 				},
 			});
 		}
-		// TODO: title, contents, images 선택적 수정 api
-		const titleData = title ? title : undefined;
-		const updatedData = await createQueryBuilder()
-			.update(Posts)
-			.set({
-				title: titleData,
-				contents: contents,
-				images: images,
-			})
-			.where('id = :id', { id: postId });
+		const findPost = await this.postRepository.findOne({ where: { id: postId } });
+		findPost.title = title;
+		findPost.contents = contents;
+		findPost.images = images;
+		await this.postRepository.save(findPost);
+		const updatedData = await this.postRepository.findOne({ where: { id: postId } });
+		throw new HttpException(updatedData, 200);
 	}
 
-	async deletePost(param) {}
+	async deletePost(param, req) {
+		const userInfo = await this.tokenFunction.isAuthorized(req);
+		if (!userInfo) {
+			throw new UnauthorizedException({
+				code: 'invalidAuthToken',
+				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
+				value: { 'x-auth-token': null },
+			});
+		}
+		// TODO: 유저 에러
+
+		const findPost = await this.postRepository.findOne({ where: { id: param.postId } });
+		if (!findPost) {
+			throw new NotFoundException('_');
+		}
+		await this.postRepository.delete(param.postId);
+		throw new HttpException('_', 204);
+	}
 }

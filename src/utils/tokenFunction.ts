@@ -2,7 +2,7 @@ import { sign, verify } from 'jsonwebtoken';
 
 export class TokenFunction {
 	async generateAccessToken(data) {
-		return sign(data, process.env['JWT_SECRET'], { expiresIn: '120s' });
+		return sign(data, process.env['JWT_SECRET'], { expiresIn: '180s' });
 	}
 
 	async isAuthorized(req) {
