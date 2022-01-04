@@ -79,7 +79,7 @@ export class SenderController {
   @ApiOperation({ summary: "문자 인증코드 발송" })
   @Post("message-auth-tokens")
   @HttpCode(204)
-  sendMessageAuthToken(@Body() body: checkMessageAuthToken): void {
+  sendMessageAuthToken(@Body() body: checkMessageAuthToken): Promise<void> {
     return this.accountService.sendMessage(body.phone);
   }
 
