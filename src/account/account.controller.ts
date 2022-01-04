@@ -11,13 +11,13 @@ import {
 } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { SignUpRequestDto } from "./dto/signUpDto/SignUpRequestDto";
-import { loginRequestDto } from "./dto/signUpDto/login.request.dto";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
 import { CurrentUser } from "../common/decorators/currentUser.decorator";
 import { AccountEntity } from "../entities/Account.entity";
 import { CurrentToken } from "../common/decorators/currenToken.decorator";
 import { checkMessageAuthToken } from "./dto/signUpDto/MessageAuthToken.request.dto";
 import { ApiOperation } from "@nestjs/swagger";
+import { LocalGuard } from "../common/guards/local.guard";
 
 @Controller("account")
 export class AccountController {
@@ -33,11 +33,14 @@ export class AccountController {
 
   @ApiOperation({ summary: "로그인" })
   @Post("sessions/me")
+  @UseGuards(LocalGuard)
   async loginUser(
-    @Body() data: loginRequestDto,
+    @CurrentUser() user: { token: string; body: AccountEntity },
     @Res() res
-  ): Promise<AccountEntity> {
-    return await this.accountService.loginAccount(data, res);
+  ): Promise<Response> {
+    return await res
+      .set({ "x-auth-token": user.token })
+      .json({ row: user.body });
   }
 
   @ApiOperation({ summary: "내정보 조회" })
