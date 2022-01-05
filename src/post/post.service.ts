@@ -17,13 +17,13 @@ export class PostService {
 
   async createPost(
     body: CreatePostRequestDto,
-    currUserId: AccountEntity
+    currAccount: Pick<AccountEntity, "id" | "name">
   ): Promise<Omit<PostEntity, "accountId">> {
     if (!body.title) {
       throw new HttpException([errorConstant.postTitleError], 404);
     }
     const images = this.savePostImage(body.images);
-    const { id, name } = currUserId;
+    const { id, name } = currAccount;
     const post = this.postRepository.create({
       ...body,
       images,
@@ -52,14 +52,14 @@ export class PostService {
       }
       return findPosts;
     } catch (err) {
-      throw new NotFoundException();
+      throw new NotFoundException(err);
     }
   }
 
   async requestPostOne(id: number): Promise<Omit<PostEntity, "accountId">> {
     try {
       const { accountId, ...postOne } = await this.postRepository.findOne(id);
-      postOne.images = JSON.parse(postOne.images);
+      // postOne.images = JSON.parse(postOne.images);
       return postOne;
     } catch (err) {
       throw new NotFoundException();
@@ -81,7 +81,9 @@ export class PostService {
 
     const images = this.savePostImage(body.images);
     const updatePost = { ...post, ...body, images };
-    const savePost = await this.postRepository.save(updatePost);
+    const { accountId, ...savePost } = await this.postRepository.save(
+      updatePost
+    );
     savePost.images = JSON.parse(savePost.images);
     return savePost;
   }

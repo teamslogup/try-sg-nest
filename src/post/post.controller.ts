@@ -41,7 +41,7 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   createPost(
     @Body() body: CreatePostRequestDto,
-    @CurrentUser() account: AccountEntity
+    @CurrentUser() account: Pick<AccountEntity, "id" | "name">
   ): Promise<Omit<PostEntity, "accountId">> {
     return this.postService.createPost(body, account);
   }
