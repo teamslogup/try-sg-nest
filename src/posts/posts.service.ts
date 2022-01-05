@@ -18,7 +18,7 @@ export class PostsService {
 	async post(body, req) {
 		const userInfo = this.tokenFunction.isAuthorized(req);
 
-		const { title, contents, images, accountId, userId } = body;
+		const { title, contents, images } = body;
 		if (!userInfo) {
 			throw new NotFoundException('_');
 		}
@@ -28,8 +28,10 @@ export class PostsService {
 		}
 
 		const post = await this.postRepository.save({
-			accountId: accountId,
-			userId: userId,
+			//@ts-ignore
+			accountId: userInfo.userInfo.id,
+			//@ts-ignore
+			userId: userInfo.userInfo.userId,
 			title: title,
 			contents: contents,
 			images: images,
@@ -68,12 +70,17 @@ export class PostsService {
 		const { postId } = param;
 		const { title, contents, images } = body;
 		const userInfo = await this.tokenFunction.isAuthorized(req);
-		if (!userInfo) {
+		if (!userInfo.userInfo) {
 			throw new UnauthorizedException({
 				code: 'invalidAuthToken',
 				message: '사용자 인증 토큰이 유효하지 않습니다. 다시 로그인해주세요.',
 				value: { 'x-auth-token': null },
 			});
+		}
+		const findPost = await this.postRepository.findOne({ where: { id: postId } });
+		//@ts-ignore
+		if (userInfo.userInfo.id !== findPost.accountId) {
+			throw new HttpException({ code: 'invalidUser', message: '타인이 작성한 글은 수정할 수 없습니다.' }, 401);
 		}
 
 		if (title === null || title === '') {
@@ -85,7 +92,7 @@ export class PostsService {
 				},
 			});
 		}
-		const findPost = await this.postRepository.findOne({ where: { id: postId } });
+
 		findPost.title = title;
 		findPost.contents = contents;
 		findPost.images = images;
@@ -103,9 +110,12 @@ export class PostsService {
 				value: { 'x-auth-token': null },
 			});
 		}
-		// TODO: 유저 에러
-
 		const findPost = await this.postRepository.findOne({ where: { id: param.postId } });
+		//@ts-ignore
+		if (userInfo.userInfo.id !== findPost.accountId) {
+			throw new HttpException({ code: 'invalidUser', message: '타인이 작성한 글은 삭제할 수 없습니다.' }, 401);
+		}
+
 		if (!findPost) {
 			throw new NotFoundException('_');
 		}
