@@ -17,6 +17,7 @@ const config: TypeOrmModuleOptions = {
   synchronize: false, // 한번 만들고 나서는 false 로 해주는것이 좋다.
   logging: true,
   keepConnectionAlive: true,
+  //extra: { trustServerCertificate: true },  mssql 작동을 위한 코드
 };
 
 export = config;

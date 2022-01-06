@@ -10,12 +10,12 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { AccountService } from "./account.service";
-import { SignUpRequestDto } from "./dto/signUpDto/SignUpRequestDto";
+import { SignUpRequestDto } from "./dtos/signUpDto/SignUpRequestDto";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
-import { CurrentUser } from "../common/decorators/currentUser.decorator";
-import { AccountEntity } from "../entities/Account.entity";
-import { CurrentToken } from "../common/decorators/currenToken.decorator";
-import { checkMessageAuthToken } from "./dto/signUpDto/MessageAuthToken.request.dto";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { AccountEntity } from "../common/entities/account.entity";
+import { CurrentToken } from "../common/decorators/current-token.decorator";
+import { checkMessageAuthToken } from "./dtos/signUpDto/MessageAuthToken.request.dto";
 import { ApiOperation } from "@nestjs/swagger";
 import { LocalGuard } from "../common/guards/local.guard";
 

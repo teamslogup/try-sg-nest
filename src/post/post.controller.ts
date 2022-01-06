@@ -14,14 +14,14 @@ import {
 } from "@nestjs/common";
 import { PostService } from "./post.service";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
-import { CurrentUser } from "../common/decorators/currentUser.decorator";
-import { AccountEntity } from "../entities/Account.entity";
-import { CreatePostRequestDto } from "./dto/createPost.request.dto";
-import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
-import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { AccountEntity } from "../common/entities/account.entity";
+import { CreatePostRequestDto } from "./dtos/createPost.request.dto";
+import { RequestPostsRequestDto } from "./dtos/requestPosts.request.dto";
+import { UpdatePostRequestDto } from "./dtos/updatePost.request.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { multerOptions } from "../multerOptions";
-import { PostEntity } from "../entities/Post.entity";
+import { multerOptions } from "../multer-options";
+import { PostEntity } from "../common/entities/post.entity";
 import { ApiOperation } from "@nestjs/swagger";
 
 @Controller("posts")

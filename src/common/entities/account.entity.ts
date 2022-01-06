@@ -2,9 +2,9 @@ import { Column, Entity, OneToMany } from "typeorm";
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-import { PostEntity } from "./Post.entity";
-import { CoreEntity } from "./Core.entity";
-import AccountStatusTypes from "../common/types/accountStatusType";
+import { PostEntity } from "./post.entity";
+import { CoreEntity } from "./core.entity";
+import AccountStatusTypes from "../types/account-status-type";
 
 @Entity({ schema: "try_gs_nest", name: "accounts" })
 export class AccountEntity extends CoreEntity {

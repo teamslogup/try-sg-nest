@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
-import { AccountEntity } from "./Account.entity";
-import { CoreEntity } from "./Core.entity";
+import { AccountEntity } from "./account.entity";
+import { CoreEntity } from "./core.entity";
 
 @Entity({ schema: "try_gs_nest", name: "posts" })
 export class PostEntity extends CoreEntity {
