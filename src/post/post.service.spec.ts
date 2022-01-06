@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { PostEntity } from "../entities/Post.entity";
+import { PostEntity } from "../common/entities/post.entity";
 import { PostService } from "./post.service";
 import { HttpException, NotFoundException } from "@nestjs/common";
 import { errorConstant } from "../common/constants/error.constant";

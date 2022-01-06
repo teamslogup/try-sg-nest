@@ -1,13 +1,13 @@
 import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
-import { PostEntity } from "../entities/Post.entity";
+import { PostEntity } from "../common/entities/post.entity";
 import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { errorConstant } from "../common/constants/error.constant";
-import { CreatePostRequestDto } from "./dto/createPost.request.dto";
-import { AccountEntity } from "../entities/Account.entity";
-import { RequestPostsRequestDto } from "./dto/requestPosts.request.dto";
-import { UpdatePostRequestDto } from "./dto/updatePost.request.dto";
-import { createImageURL } from "../multerOptions";
+import { CreatePostRequestDto } from "./dtos/createPost.request.dto";
+import { AccountEntity } from "../common/entities/account.entity";
+import { RequestPostsRequestDto } from "./dtos/requestPosts.request.dto";
+import { UpdatePostRequestDto } from "./dtos/updatePost.request.dto";
+import { createImageURL } from "../multer-options";
 
 @Injectable()
 export class PostService {

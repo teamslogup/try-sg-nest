@@ -2,10 +2,10 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
-import { AccountEntity } from "../entities/Account.entity";
-import { SignUpRequestDto } from "./dto/signUpDto/SignUpRequestDto";
+import { AccountEntity } from "../common/entities/account.entity";
+import { SignUpRequestDto } from "./dtos/signUpDto/SignUpRequestDto";
 import { errorConstant } from "../common/constants/error.constant";
-import AccountStatusTypes from "../common/types/accountStatusType";
+import AccountStatusTypes from "../common/types/account-status-type";
 
 @Injectable()
 export class AccountService {
@@ -14,8 +14,8 @@ export class AccountService {
     private accountRepository: Repository<AccountEntity>
   ) {}
 
-  findOne(id: number) {
-    return this.accountRepository.findOne(id);
+  async findOne(id: number) {
+    return await this.accountRepository.findOne(id);
   }
 
   async createAccount(
@@ -32,8 +32,9 @@ export class AccountService {
     const { cert, ...accountInfo } = data;
     const createAccount = await this.accountRepository.create(accountInfo);
     createAccount.password = await bcrypt.hash(data.password, 10);
-    const saveAccount = await this.accountRepository.save(createAccount);
-    const { password, ...accountParam } = saveAccount;
+    const { password, ...accountParam } = await this.accountRepository.save(
+      createAccount
+    );
     return accountParam;
   }
 
@@ -99,10 +100,10 @@ export class AccountService {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId },
     });
-    if (!duplicateId) {
-      return;
+    if (duplicateId) {
+      throw new HttpException([errorConstant.duplicatedId], 409);
     }
-    throw new HttpException([errorConstant.duplicatedId], 409);
+    return;
   }
 
   async sendMessage(phone: string): Promise<void> {
@@ -133,9 +134,7 @@ export class AccountService {
     if (!phone) {
       throw new HttpException([errorConstant.sendMessageEmptyPhone], 400);
     }
-    //TODO: +3분 더해주기 ...
     const time = new Date();
-    time.setHours(time.getHours() + 9);
     time.setMinutes(time.getMinutes() + 3);
     return { cert: "abcd123", certExpiredAt: time };
   }

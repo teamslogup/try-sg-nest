@@ -3,7 +3,7 @@ import { PostService } from "./post.service";
 import { ImageController, PostController } from "./post.controller";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { PostEntity } from "../entities/Post.entity";
+import { PostEntity } from "../common/entities/post.entity";
 import { AccountModule } from "../account/account.module";
 
 @Module({

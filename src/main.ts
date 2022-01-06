@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { HttpExceptionFilter } from "./http.exception.filter";
+import { HttpExceptionFilter } from "./common/interceptors/http.exception.filter";
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor";
 import express from "express";
 import { join } from "path";
@@ -10,7 +10,7 @@ import { join } from "path";
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 

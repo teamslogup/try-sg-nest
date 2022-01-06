@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AccountService } from "./account.service";
-import { AccountEntity } from "../entities/Account.entity";
+import { AccountEntity } from "../common/entities/account.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { HttpException } from "@nestjs/common";
 import { errorConstant } from "../common/constants/error.constant";
-import { SignUpRequestDto } from "./dto/signUpDto/SignUpRequestDto";
+import { SignUpRequestDto } from "./dtos/signUpDto/SignUpRequestDto";
 
 class MockAccountRepository {
   #data = [

@@ -24,7 +24,7 @@ export class TransformInterceptor<T>
       map((data) =>
         data !== undefined
           ? data.length > 1
-            ? { row: data, count: data.length }
+            ? { rows: data, count: data.length }
             : {
                 row: data,
               }

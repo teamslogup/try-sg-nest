@@ -4,7 +4,6 @@ import { AccountModule } from "../account/account.module";
 import { JwtStrategy } from "../common/strategies/jwt.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { LocalStrategy } from "../common/strategies/local.strategy";
-import { AccountEntity } from "../entities/Account.entity";
 
 @Module({
   imports: [
