@@ -4,7 +4,7 @@ import { AccountEntity } from "../common/entities/account.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { HttpException } from "@nestjs/common";
 import { errorConstant } from "../common/constants/error.constant";
-import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dtd";
+import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dto";
 
 class MockAccountRepository {
   #data = [

@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { AccountService } from "./account.service";
-import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dtd";
+import { SignupRequestDto } from "./dtos/signUpDto/signup-request.dto";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { AccountEntity } from "../common/entities/account.entity";
@@ -27,7 +27,7 @@ export class AccountController {
   @ApiOperation({ summary: "회원가입" })
   @Post("users")
   async createUser(
-    @Body() data: SignupRequestDtd
+    @Body() data: SignupRequestDto
   ): Promise<Omit<AccountEntity, "password">> {
     return await this.accountService.createAccount(data);
   }

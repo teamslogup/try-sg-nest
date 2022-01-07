@@ -3,7 +3,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { AccountEntity } from "../common/entities/account.entity";
-import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dtd";
+import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dto";
 import { errorConstant } from "../common/constants/error.constant";
 import AccountStatusTypes from "../common/types/account-status-type";
 
