@@ -16,15 +16,16 @@ import { PostService } from "./post.service";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { AccountEntity } from "../common/entities/account.entity";
-import { CreatePostRequestDto } from "./dtos/createPost.request.dto";
-import { RequestPostsRequestDto } from "./dtos/requestPosts.request.dto";
-import { UpdatePostRequestDto } from "./dtos/updatePost.request.dto";
+import { CreatePostRequestDto } from "./dtos/create-post.request.dto";
+import { RequestPostsRequestDto } from "./dtos/request-posts.request.dto";
+import { UpdatePostRequestDto } from "./dtos/update-post.request.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "../multer-options";
 import { PostEntity } from "../common/entities/post.entity";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @Controller("posts")
+@ApiTags("게시물관리")
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
@@ -78,6 +79,7 @@ export class PostController {
 }
 
 @Controller("uploader")
+@ApiTags("이미지업로드")
 export class ImageController {
   constructor(private postService: PostService) {}
 

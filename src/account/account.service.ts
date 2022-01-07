@@ -3,7 +3,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { AccountEntity } from "../common/entities/account.entity";
-import { SignUpRequestDto } from "./dtos/signUpDto/SignUpRequestDto";
+import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dtd";
 import { errorConstant } from "../common/constants/error.constant";
 import AccountStatusTypes from "../common/types/account-status-type";
 
@@ -19,7 +19,7 @@ export class AccountService {
   }
 
   async createAccount(
-    data: SignUpRequestDto
+    data: SignupRequestDtd
   ): Promise<Omit<AccountEntity, "password">> {
     const duplicateId = await this.accountRepository.findOne({
       where: { accountId: data.accountId },
@@ -139,7 +139,7 @@ export class AccountService {
     return { cert: "abcd123", certExpiredAt: time };
   }
 
-  errorCheckSignUp(data: SignUpRequestDto) {
+  errorCheckSignUp(data: SignupRequestDtd) {
     const pwPattern =
       /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/;
     const namePattern = /^[가-힣]{2,}|[a-zA-Z]{2,}$/;

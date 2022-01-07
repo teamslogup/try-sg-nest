@@ -3,10 +3,10 @@ import { PostEntity } from "../common/entities/post.entity";
 import { Like, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { errorConstant } from "../common/constants/error.constant";
-import { CreatePostRequestDto } from "./dtos/createPost.request.dto";
+import { CreatePostRequestDto } from "./dtos/create-post.request.dto";
 import { AccountEntity } from "../common/entities/account.entity";
-import { RequestPostsRequestDto } from "./dtos/requestPosts.request.dto";
-import { UpdatePostRequestDto } from "./dtos/updatePost.request.dto";
+import { RequestPostsRequestDto } from "./dtos/request-posts.request.dto";
+import { UpdatePostRequestDto } from "./dtos/update-post.request.dto";
 import { createImageURL } from "../multer-options";
 
 @Injectable()

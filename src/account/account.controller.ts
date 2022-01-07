@@ -10,23 +10,24 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { AccountService } from "./account.service";
-import { SignUpRequestDto } from "./dtos/signUpDto/SignUpRequestDto";
+import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dtd";
 import { JwtAuthGuard } from "../common/guards/auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { AccountEntity } from "../common/entities/account.entity";
 import { CurrentToken } from "../common/decorators/current-token.decorator";
-import { checkMessageAuthToken } from "./dtos/signUpDto/MessageAuthToken.request.dto";
-import { ApiOperation } from "@nestjs/swagger";
+import { checkMessageAuthToken } from "./dtos/signUpDto/message-auth-token.request.dto";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { LocalGuard } from "../common/guards/local.guard";
 
 @Controller("account")
+@ApiTags("Account")
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @ApiOperation({ summary: "회원가입" })
   @Post("users")
   async createUser(
-    @Body() data: SignUpRequestDto
+    @Body() data: SignupRequestDtd
   ): Promise<Omit<AccountEntity, "password">> {
     return await this.accountService.createAccount(data);
   }
@@ -73,6 +74,7 @@ export class AccountController {
 }
 
 @Controller("sender")
+@ApiTags("문자인증")
 export class SenderController {
   constructor(private readonly accountService: AccountService) {}
 
