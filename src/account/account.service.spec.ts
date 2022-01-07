@@ -4,7 +4,7 @@ import { AccountEntity } from "../common/entities/account.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { HttpException } from "@nestjs/common";
 import { errorConstant } from "../common/constants/error.constant";
-import { SignupRequestDtd } from "./dtos/signUpDto/signup-request.dto";
+import { SignupRequestDto } from "./dtos/signUpDto/signup-request.dto";
 
 class MockAccountRepository {
   #data = [
@@ -62,7 +62,7 @@ class MockAccountRepository {
     return findData;
   }
 
-  create(data: Omit<SignupRequestDtd, "cert">) {
+  create(data: Omit<SignupRequestDto, "cert">) {
     return {
       accountId: data.accountId,
       name: data.name,
@@ -120,7 +120,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시켜야한다.", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testad12",
       name: "제시",
       email: "asdf@gmail.com",
@@ -141,7 +141,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 동일 유저가 있는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "test12",
       name: "제시",
       email: "asdf@gmail.com",
@@ -155,7 +155,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 아이디가 없는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "",
       name: "제시",
       email: "asdf@gmail.com",
@@ -169,7 +169,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 아이디가 형식에 맞지 않는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "1234",
       name: "제시",
       email: "asdf@gmail.com",
@@ -183,7 +183,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 핸드폰 인증토큰이 잘못된 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf@gmail.com",
@@ -197,7 +197,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 이름 형식이 잘못된 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "짹",
       email: "asdf@gmail.com",
@@ -211,7 +211,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 이메일 형식이 잘못된 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123",
@@ -225,7 +225,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 비밀번호 형식이 잘못된 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123@gmail.com",
@@ -239,7 +239,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 핸드폰 번호 형식이 잘못된 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123@gmail.com",
@@ -253,7 +253,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 이름이 없는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "",
       email: "asdf123@gmail.com",
@@ -267,7 +267,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 핸드폰번호가 없는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123@gmail.com",
@@ -281,7 +281,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 비밀번호가 없는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123@gmail.com",
@@ -295,7 +295,7 @@ describe("AccountService", () => {
   });
 
   it("createAccount 를 통해 유저를 회원가입 시 토큰이 없는 경우", () => {
-    const data: SignupRequestDtd = {
+    const data: SignupRequestDto = {
       accountId: "testId54",
       name: "제시",
       email: "asdf123@gmail.com",
