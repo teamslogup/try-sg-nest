@@ -23,4 +23,6 @@ export class AuthService {
     const jwtToken = this.jwtService.sign(payload);
     return { token: jwtToken, body: account };
   }
+
+  //Test
 }

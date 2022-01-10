@@ -41,3 +41,15 @@ $ npm run test:cov
 ## 기술 스택
 
 - Nest JS , TypeScript , TypeORM , MySQL , Swagger
+
+## 환경변수
+```bash
+DB_HOST= <<YOUR HOST>>
+DB_USERNAME= <<YOUR DB_USERNAME>>
+DB_PASSWORD= <<YOUR DB_PASSWORD>>
+DB_DATABASE= <<YOUR DB_DATABASE NAME>>
+
+JWT_SECRET= <<JWT_SECRET KEY>>
+
+SERVERADDRESS= <<YOUR SERVER ADDRESS>>
+```
