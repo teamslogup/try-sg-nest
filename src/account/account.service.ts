@@ -1,11 +1,4 @@
-import {
-	BadRequestException,
-	ConflictException,
-	ForbiddenException,
-	HttpException,
-	Injectable,
-	UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Accounts } from '../entities/Accounts';
 import { Repository } from 'typeorm';
@@ -49,28 +42,28 @@ export class AccountService {
 		const namePattern = /^[가-힣]{2,}|[a-zA-Z]{2,}$/;
 		const emailPattern = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 		const phonePattern = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
-		// TODO: 아이디를 입력하지 않았을 때
+		// 아이디를 입력하지 않았을 때
 		if (!body.userId) {
 			throw new BadRequestException({
 				code: 'requiredId',
 				message: '아이디를 입력해주세요.',
 			});
 		}
-		// TODO: 아이디 중복확인 안했을 때
+		// 아이디 중복확인 안했을 때
 		if (!body.isValidatedId) {
 			throw new BadRequestException({
 				code: 'nonValidatedId',
 				message: '아이디 중복확인을 해 주세요.',
 			});
 		}
-		// TODO: 이름을 입력하지 않았을 때
+		// 이름을 입력하지 않았을 때
 		if (!body.name) {
 			throw new BadRequestException({
 				code: 'requireName',
 				message: '이름을 입력해주세요.',
 			});
 		}
-		// TODO: 이름이 형식에 맞지 않을 때
+		// 이름이 형식에 맞지 않을 때
 		if (!namePattern.test(body.name)) {
 			throw new BadRequestException({
 				code: 'invalidName',
@@ -78,14 +71,14 @@ export class AccountService {
 				value: { name: body.name },
 			});
 		}
-		// TODO: 이메일을 입력하지 않았을 때
+		// 이메일을 입력하지 않았을 때
 		if (!body.email) {
 			throw new BadRequestException({
 				code: 'requireEmail',
 				message: '이메일을 입력해주세요.',
 			});
 		}
-		// TODO: 이메일 형식이 맞지 않을 때
+		// 이메일 형식이 맞지 않을 때
 		if (!emailPattern.test(body.email)) {
 			throw new BadRequestException({
 				code: 'invalidEmail',
@@ -93,14 +86,14 @@ export class AccountService {
 				value: { email: body.email },
 			});
 		}
-		// TODO: 비밀번호를 입력하지 않았을 때
+		// 비밀번호를 입력하지 않았을 때
 		if (!body.password) {
 			throw new BadRequestException({
 				code: 'requirePassword',
 				message: '비밀번호를 입력해주세요.',
 			});
 		}
-		// TODO: 비밀번호 형식이 맞지 않을 때
+		// 비밀번호 형식이 맞지 않을 때
 		if (!pwPattern.test(body.password)) {
 			throw new BadRequestException({
 				code: 'invalidPassword',
@@ -108,14 +101,14 @@ export class AccountService {
 				value: { password: body.password },
 			});
 		}
-		// TODO: 전화번호를 입력하지 않았을 때
+		// 전화번호를 입력하지 않았을 때
 		if (!body.phone) {
 			throw new BadRequestException({
 				code: 'requirePhone',
 				message: '전화번호를 입력해주세요.',
 			});
 		}
-		// TODO: 전화번호 형식이 맞지 않을 때
+		// 전화번호 형식이 맞지 않을 때
 		if (!phonePattern.test(body.phone)) {
 			throw new BadRequestException({
 				code: 'invalidPhone',
@@ -123,7 +116,7 @@ export class AccountService {
 				value: { phone: body.phone },
 			});
 		}
-		// TODO: 문자 인증 안했을 때
+		// 문자 인증 안했을 때
 		if (body.cert !== 'abcd123') {
 			throw new BadRequestException({
 				code: 'requireCert',
@@ -149,21 +142,21 @@ export class AccountService {
 		throw new HttpException(userInfo, 201);
 	}
 
-	async logIn(user: LoginUserDto, res) {
+	async logIn(user: LoginUserDto) {
 		const userInfo = await this.accountRepository.findOne({ where: { userId: user.userId } });
 
-		// TODO: 없는 유저일 경우
+		// 없는 유저일 경우
 		if (!userInfo) {
-			throw new ForbiddenException({
+			throw new BadRequestException({
 				code: '',
 				message: '존재하지 않는 회원입니다.',
 				value: { accountId: user.userId },
 			});
 		}
 
-		// TODO: 잘못된 사용자 정보를 받았을 때(비밀번호 인증 실패)
+		// 잘못된 사용자 정보를 받았을 때(비밀번호 인증 실패)
 		const isMatch = await bcrypt.compare(user.password, userInfo.password);
-		const returnPwError = (errorCount: number): object => {
+		const getPwError = (errorCount: number): object => {
 			const addMessage: string = errorCount < 3 ? ', 연속 3회 입력 오류시 로그인이 제한됩니다' : '';
 			return {
 				code: 'wrongPassword',
@@ -172,12 +165,12 @@ export class AccountService {
 			};
 		};
 
-		if (!isMatch && user.errorCount < 3) {
-			const json = await returnPwError(user.errorCount);
-			throw new ForbiddenException(json);
+		if (!isMatch) {
+			const json = await getPwError(user.errorCount);
+			throw new BadRequestException(json);
 		}
 		if (user.errorCount >= 3) {
-			throw new ForbiddenException({
+			throw new BadRequestException({
 				code: 'lockedSignIn',
 				message: '비밀번호 3회 입력 오류로 인해 잠긴 계정입니다. 본인인증 후 재시도해주세요.',
 			});
@@ -194,7 +187,7 @@ export class AccountService {
 		};
 		const accessToken = await this.tokenFunction.generateAccessToken(payload);
 
-		return res.set({ 'x-auth-token': accessToken }).status(200).json({ row: userInfo });
+		return { accessToken: accessToken, userInfo: userInfo };
 	}
 
 	async logOut(req) {

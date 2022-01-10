@@ -8,7 +8,7 @@ declare const module: any;
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-
+	app.enableCors({ exposedHeaders: 'x-auth-token' }); // client에서 res.headers에 접근할 수 있게 함.
 	const config = new DocumentBuilder()
 		.setTitle('try_sg_nest API')
 		.setDescription('try_sg_nest API 문서입니다.')

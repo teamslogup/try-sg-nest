@@ -30,13 +30,14 @@ export class AccountController {
 		description: '로그인 실패',
 	})
 	@ApiOperation({ summary: '로그인' })
-	@Post('/sessions/me')
+	@Post('sessions/me')
 	async logIn(@Body() data: LoginUserDto, @Res() res) {
-		await this.AccountService.logIn(data, res);
+		const result = await this.AccountService.logIn(data);
+		return res.set({ 'x-auth-token': result.accessToken }).status(200).json({ row: result.userInfo });
 	}
 
 	@ApiOperation({ summary: '로그아웃' })
-	@Delete('/sessions/me')
+	@Delete('sessions/me')
 	async logOut(@Req() req) {
 		await this.AccountService.logOut(req);
 	}
@@ -47,7 +48,7 @@ export class AccountController {
 		description: '유저가 입력한 아이디',
 	})
 	@ApiOperation({ summary: '아이디 중복 확인' })
-	@Get('/sessions/me/:userId')
+	@Get('id-duplication/:userId')
 	async checkDuplicationId(@Param() param) {
 		await this.AccountService.checkDuplicationId(param.userId);
 	}
@@ -63,7 +64,7 @@ export class AccountController {
 		description: '모든 회원가입 실패 케이스',
 	})
 	@ApiOperation({ summary: '회원가입' })
-	@Post('/users')
+	@Post('users')
 	async signUp(@Body() body: JoinRequestDto) {
 		return await this.AccountService.signUp(body);
 	}
