@@ -16,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let data: any;
     data = exception.getResponse();
     if (isArray(data)) {
-      return res.status(status).json({ row: data, count: data.length });
+      return res.status(status).json({ rows: data, count: data.length });
     }
 
     res.status(status).json({ row: data });
